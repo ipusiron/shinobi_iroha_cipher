@@ -1,3 +1,28 @@
+// 濁点・半濁点・促音を清音に変換するマッピング
+const DAKUTEN_TO_SEION = {
+  // 濁点 (が行)
+  'が': 'か', 'ぎ': 'き', 'ぐ': 'く', 'げ': 'け', 'ご': 'こ',
+  // 濁点 (ざ行)
+  'ざ': 'さ', 'じ': 'し', 'ず': 'す', 'ぜ': 'せ', 'ぞ': 'そ',
+  // 濁点 (だ行)
+  'だ': 'た', 'ぢ': 'ち', 'づ': 'つ', 'で': 'て', 'ど': 'と',
+  // 濁点 (ば行)
+  'ば': 'は', 'び': 'ひ', 'ぶ': 'ふ', 'べ': 'へ', 'ぼ': 'ほ',
+  // 半濁点 (ぱ行)
+  'ぱ': 'は', 'ぴ': 'ひ', 'ぷ': 'ふ', 'ぺ': 'へ', 'ぽ': 'ほ',
+  // 促音・長音
+  'っ': 'つ',
+  'ー': '', // 長音は除去
+  // その他特殊文字
+  'ゃ': 'や', 'ゅ': 'ゆ', 'ょ': 'よ',
+  'ぁ': 'あ', 'ぃ': 'い', 'ぅ': 'う', 'ぇ': 'え', 'ぉ': 'お'
+};
+
+// 文字を清音に変換する関数
+function convertToSeion(text) {
+  return [...text].map(char => DAKUTEN_TO_SEION[char] || char).join('');
+}
+
 const IROHA_TO_PAIR = {
   "い": { hen: "木", tsukuri: "色" }, "ろ": { hen: "火", tsukuri: "色" }, "は": { hen: "土", tsukuri: "色" },
   "に": { hen: "金", tsukuri: "色" }, "ほ": { hen: "水", tsukuri: "色" }, "へ": { hen: "人", tsukuri: "色" },
@@ -162,10 +187,19 @@ function processText() {
   const outputDiv = document.getElementById('outputText');
 
   if (mode === 'encrypt') {
-    const result = [...input].map(ch => {
+    // 暗号化前に濁点・半濁点・促音を清音に変換
+    const seionText = convertToSeion(input);
+    
+    const result = [...seionText].map(ch => {
       const pair = IROHA_TO_PAIR[ch];
       return pair ? pair.hen + pair.tsukuri : ch;
     }).join(' ');
+    
+    // 変換過程を表示する場合のデバッグ情報（開発用）
+    if (seionText !== input) {
+      console.log(`原文: ${input} → 清音変換後: ${seionText} → 暗号化: ${result}`);
+    }
+    
     outputDiv.textContent = result;
   } else {
     const tokens = input.replace(/\s+/g, ' ').split(' ');
