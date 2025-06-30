@@ -10,9 +10,14 @@
   <div class="container">
     <div class="header">
       <h1>忍びいろはの暗号ツール<br>（Shinobi Iroha Cipher Tool）</h1>
-      <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()">
-        <span class="theme-icon">🌙</span>
-      </button>
+      <div class="header-buttons">
+        <button id="helpButton" class="help-button" onclick="openHelpModal()" title="使い方・説明">
+          <span class="help-icon">❓</span>
+        </button>
+        <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()" title="テーマ切り替え">
+          <span class="theme-icon">🌙</span>
+        </button>
+      </div>
     </div>
     <label for="mode">モード選択:</label>
     <select id="mode">
@@ -69,6 +74,75 @@
       🔗 GitHubリポジトリはこちら（<a href="https://github.com/ipusiron/shinobi_iroha_cipher" target="_blank">ipusiron/shinobi_iroha_cipher</a>）
     </div>
   </footer>
+
+  <!-- ヘルプモーダル -->
+  <div id="helpModal" class="modal" onclick="closeHelpModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h2>忍びいろは暗号について</h2>
+        <button class="modal-close" onclick="closeHelpModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <section class="help-section">
+          <h3>📚 忍びいろは暗号とは</h3>
+          <p>忍びいろは暗号は、江戸時代の忍術書『万川集海』に記載されている古典暗号です。ひらがなを漢字の「偏（へん）」と「旁（つくり）」の組み合わせで表現することで、文字を隠す技術です。</p>
+        </section>
+
+        <section class="help-section">
+          <h3>🎯 使い方</h3>
+          <div class="usage-step">
+            <h4>暗号化の場合：</h4>
+            <ol>
+              <li>モード選択で「暗号化」を選択</li>
+              <li>テキスト入力欄にひらがなを入力（例：「てき」）</li>
+              <li>「変換」ボタンをクリック</li>
+              <li>結果：「身白 土黒」のように表示されます</li>
+            </ol>
+          </div>
+          
+          <div class="usage-step">
+            <h4>復号の場合：</h4>
+            <ol>
+              <li>モード選択で「復号」を選択</li>
+              <li>暗号文を入力（例：「身白 土黒」）</li>
+              <li>「変換」ボタンをクリック</li>
+              <li>結果：「てき」のように表示されます</li>
+            </ol>
+          </div>
+        </section>
+
+        <section class="help-section">
+          <h3>📊 変換表の見方</h3>
+          <p>テーブルは以下のように読みます：</p>
+          <ul>
+            <li><strong>縦軸（右端）</strong>：偏（木、火、土、金、水、人、身）</li>
+            <li><strong>横軸（上部）</strong>：旁（紫、黒、白、赤、黄、青、色）</li>
+            <li><strong>交点</strong>：該当するひらがな</li>
+          </ul>
+          <div class="example-box">
+            <strong>例：</strong> 「て」を暗号化する場合<br>
+            → テーブルで「て」を探す<br>
+            → 「身」の行、「白」の列にある<br>
+            → 暗号文は「身白」
+          </div>
+        </section>
+
+        <section class="help-section">
+          <h3>💡 機能説明</h3>
+          <ul>
+            <li><strong>📋 コピーボタン</strong>：変換結果を瞬時にクリップボードにコピー</li>
+            <li><strong>🌙/☀️ テーマ切り替え</strong>：ダークモード・ライトモードの切り替え</li>
+            <li><strong>📱 レスポンシブ対応</strong>：スマートフォンでも快適に利用可能</li>
+          </ul>
+        </section>
+
+        <section class="help-section">
+          <h3>📖 万川集海について</h3>
+          <p>『万川集海』は1676年（延宝4年）に藤林保武によって編纂された伊賀流忍術の教本です。この書物には忍術の心得、武器、暗号技術など、忍者の知識が体系的にまとめられており、現存する最も重要な忍術書の一つとされています。</p>
+        </section>
+      </div>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>

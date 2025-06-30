@@ -23,6 +23,31 @@ for (const [kana, pair] of Object.entries(IROHA_TO_PAIR)) {
   PAIR_TO_IROHA[key] = kana;
 }
 
+// ヘルプモーダル関連
+function openHelpModal() {
+  const modal = document.getElementById('helpModal');
+  modal.classList.add('show');
+  document.body.style.overflow = 'hidden'; // スクロールを無効化
+}
+
+function closeHelpModal(event) {
+  // イベントが渡された場合（背景クリック）は、モーダル自体がクリックされた場合のみ閉じる
+  if (event && event.target !== event.currentTarget) {
+    return;
+  }
+  
+  const modal = document.getElementById('helpModal');
+  modal.classList.remove('show');
+  document.body.style.overflow = ''; // スクロールを再有効化
+}
+
+// ESCキーでモーダルを閉じる
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Escape') {
+    closeHelpModal();
+  }
+});
+
 // テーマ管理
 function initTheme() {
   const savedTheme = localStorage.getItem('theme') || 'light';
