@@ -1,32 +1,143 @@
 @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic&display=swap');
 
+/* CSS変数でテーマカラーを定義 */
+:root {
+  /* ライトモードの色定義 */
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f1f5f9;
+  --bg-table: #ffffff;
+  --bg-table-header: #8b4513;
+  --bg-table-cell: #f9fafb;
+  --bg-table-last: #8b4513;
+  --bg-gradient-start: #ffffff;
+  --bg-gradient-end: #f8fafc;
+  --bg-button: linear-gradient(to right, #e5e7eb, #d1d5db);
+  --bg-button-hover: linear-gradient(to right, #d1d5db, #9ca3af);
+  --bg-output: #f8fafc;
+  --bg-select: #ffffff;
+  --bg-textarea: #ffffff;
+  
+  --text-primary: #1f2937;
+  --text-secondary: #4b5563;
+  --text-accent: #d97706;
+  --text-link: #2563eb;
+  --text-table-header: #ffffff;
+  --text-table-last: #ffffff;
+  --text-table-cell: #1f2937;
+  --text-input: #1f2937;
+  
+  --border-primary: #e5e7eb;
+  --border-secondary: #d1d5db;
+  --border-table: #e5e7eb;
+  --border-table-cell: #e5e7eb;
+  
+  --shadow-primary: rgba(0, 0, 0, 0.1);
+  --shadow-table: rgba(0, 0, 0, 0.1);
+  
+  --bg-pattern: radial-gradient(rgba(0,0,0,0.05) 1px, transparent 1px);
+}
+
+/* ダークモードの色定義 */
+[data-theme="dark"] {
+  --bg-primary: #0f0f0f;
+  --bg-secondary: #1e1e1e;
+  --bg-tertiary: #151515;
+  --bg-table: #121212;
+  --bg-table-header: #1f1b16;
+  --bg-table-cell: #1a1a1a;
+  --bg-table-last: #1f1b16;
+  --bg-gradient-start: #1e1e1e;
+  --bg-gradient-end: #151515;
+  --bg-button: linear-gradient(to right, #1f2937, #4b5563);
+  --bg-button-hover: linear-gradient(to right, #374151, #6b7280);
+  --bg-output: #111827;
+  --bg-select: #1f2937;
+  --bg-textarea: #111;
+  
+  --text-primary: #e0e0e0;
+  --text-secondary: #9ca3af;
+  --text-accent: #facc15;
+  --text-link: #60a5fa;
+  --text-table-header: #facc15;
+  --text-table-last: #facc15;
+  --text-table-cell: #f1f5f9;
+  --text-input: #f1f5f9;
+  
+  --border-primary: #2a2a2a;
+  --border-secondary: #374151;
+  --border-table: #444;
+  --border-table-cell: #555;
+  
+  --shadow-primary: rgba(0, 0, 0, 0.5);
+  --shadow-table: rgba(0, 0, 0, 0.6);
+  
+  --bg-pattern: radial-gradient(rgba(0,0,0,0.6) 1px, transparent 1px);
+}
+
 body {
   font-family: 'Zen Maru Gothic', sans-serif;
-  background-color: #0f0f0f;
-  background-image: radial-gradient(rgba(0,0,0,0.6) 1px, transparent 1px);
+  background-color: var(--bg-primary);
+  background-image: var(--bg-pattern);
   background-size: 20px 20px;
   background-position: center;
-  color: #e0e0e0;
+  color: var(--text-primary);
   margin: 0;
   padding: 2rem;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
 }
 
 h1 {
   text-align: center;
   font-size: 2rem;
-  margin-bottom: 1rem;
-  color: #facc15;
+  margin: 0;
+  color: var(--text-accent);
   letter-spacing: 0.1em;
+  flex: 1;
+}
+
+.theme-toggle {
+  padding: 0.5rem;
+  border: none;
+  border-radius: 50%;
+  background: var(--bg-button);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.theme-toggle:hover {
+  background: var(--bg-button-hover);
+  transform: scale(1.1);
+}
+
+.theme-icon {
+  transition: transform 0.3s ease;
 }
 
 .container {
   max-width: 800px;
   margin: 0 auto;
-  background: linear-gradient(135deg, #1e1e1e 0%, #151515 100%);
+  background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
   border-radius: 1rem;
   padding: 2rem;
-  border: 2px solid #2a2a2a;
-  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  border: 2px solid var(--border-primary);
+  box-shadow: 0 0 20px var(--shadow-primary);
+  transition: all 0.3s ease;
 }
 
 textarea {
@@ -35,43 +146,53 @@ textarea {
   margin-bottom: 1rem;
   padding: 0.75rem;
   font-size: 1rem;
-  border: 1px solid #374151;
+  border: 1px solid var(--border-secondary);
   border-radius: 0.5rem;
-  background-color: #111;
-  color: #f1f5f9;
+  background-color: var(--bg-textarea);
+  color: var(--text-input);
+  transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
-button {
+textarea:focus {
+  outline: none;
+  border-color: var(--text-accent);
+}
+
+button:not(.theme-toggle) {
   padding: 0.5rem 1.2rem;
   font-size: 1rem;
   border: none;
   border-radius: 0.5rem;
-  background-image: linear-gradient(to right, #1f2937, #4b5563);
-  color: white;
+  background: var(--bg-button);
+  color: var(--text-primary);
   cursor: pointer;
-  transition: background 0.3s;
+  transition: all 0.3s ease;
 }
 
-button:hover {
-  background-image: linear-gradient(to right, #374151, #6b7280);
+button:not(.theme-toggle):hover {
+  background: var(--bg-button-hover);
 }
 
 .output {
   margin-top: 1rem;
   white-space: pre-wrap;
-  background: #111827;
+  background: var(--bg-output);
   padding: 1rem;
   border-radius: 0.5rem;
-  color: #f1f5f9;
+  color: var(--text-input);
+  border: 1px solid var(--border-secondary);
+  transition: all 0.3s ease;
 }
 
 select {
   margin-bottom: 1rem;
   padding: 0.5rem;
-  background-color: #1f2937;
-  color: white;
-  border: 1px solid #374151;
+  background-color: var(--bg-select);
+  color: var(--text-primary);
+  border: 1px solid var(--border-secondary);
   border-radius: 0.4rem;
+  transition: all 0.3s ease;
 }
 
 table {
@@ -79,38 +200,72 @@ table {
   border-collapse: collapse;
   font-size: 1.2rem;
   text-align: center;
-  background-color: #121212;
-  border: 2px solid #444;
-  box-shadow: 0 0 10px rgba(0,0,0,0.6);
+  background-color: var(--bg-table);
+  border: 2px solid var(--border-table);
+  box-shadow: 0 0 10px var(--shadow-table);
+  transition: all 0.3s ease;
 }
 
 th {
-  background-color: #1f1b16;
-  color: #facc15;
+  background-color: var(--bg-table-header);
+  color: var(--text-table-header);
   padding: 0.6rem;
-  border: 1px solid #444;
+  border: 1px solid var(--border-table);
 }
 
 td {
-  border: 1px solid #555;
+  border: 1px solid var(--border-table-cell);
   padding: 0.5rem;
-  color: #f1f5f9;
-  background-color: #1a1a1a;
+  color: var(--text-table-cell);
+  background-color: var(--bg-table-cell);
+  transition: all 0.3s ease;
 }
 
-td:last-child {
-  background-color: #1f1b16;
-  color: #facc15;
+td:last-child,
+td.last-column {
+  background-color: var(--bg-table-last);
+  color: var(--text-table-last);
   font-weight: bold;
 }
 
 footer {
   text-align: center;
   margin-top: 2rem;
-  color: #9ca3af;
+  color: var(--text-secondary);
+  transition: color 0.3s ease;
+}
+
+.footer {
+  text-align: center;
 }
 
 footer a {
-  color: #60a5fa;
+  color: var(--text-link);
   text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 600px) {
+  .header {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  h1 {
+    font-size: 1.5rem;
+  }
+  
+  body {
+    padding: 1rem;
+  }
+  
+  .container {
+    padding: 1.5rem;
+  }
 }

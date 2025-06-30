@@ -23,6 +23,38 @@ for (const [kana, pair] of Object.entries(IROHA_TO_PAIR)) {
   PAIR_TO_IROHA[key] = kana;
 }
 
+// テーマ管理
+function initTheme() {
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  const body = document.body;
+  const themeIcon = document.querySelector('.theme-icon');
+  
+  body.setAttribute('data-theme', savedTheme);
+  updateThemeIcon(savedTheme, themeIcon);
+}
+
+function toggleTheme() {
+  const body = document.body;
+  const currentTheme = body.getAttribute('data-theme') || 'light';
+  const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+  const themeIcon = document.querySelector('.theme-icon');
+  
+  body.setAttribute('data-theme', newTheme);
+  localStorage.setItem('theme', newTheme);
+  updateThemeIcon(newTheme, themeIcon);
+}
+
+function updateThemeIcon(theme, iconElement) {
+  if (iconElement) {
+    iconElement.textContent = theme === 'light' ? '🌙' : '☀️';
+    iconElement.style.transform = 'rotate(360deg)';
+    setTimeout(() => {
+      iconElement.style.transform = 'rotate(0deg)';
+    }, 300);
+  }
+}
+
+// 暗号化処理
 function processText() {
   const input = document.getElementById('inputText').value.trim();
   const mode = document.getElementById('mode').value;
@@ -40,3 +72,8 @@ function processText() {
     outputDiv.textContent = result;
   }
 }
+
+// ページ読み込み時の初期化
+document.addEventListener('DOMContentLoaded', function() {
+  initTheme();
+});
