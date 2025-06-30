@@ -3,61 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>忍びいろはの暗号ツール（Shinobi Iroha Cipher Tool）
-  </title>
-  <style>
-    body {
-      font-family: "Segoe UI", sans-serif;
-      background-color: #f9fafb;
-      margin: 0;
-      padding: 2rem;
-      color: #111827;
-    }
-    h1 {
-      text-align: center;
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-    .container {
-      max-width: 700px;
-      margin: 0 auto;
-      background: #ffffff;
-      border-radius: 1rem;
-      padding: 2rem;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    textarea {
-      width: 100%;
-      height: 120px;
-      margin-bottom: 1rem;
-      padding: 0.75rem;
-      font-size: 1rem;
-      border: 1px solid #d1d5db;
-      border-radius: 0.5rem;
-      resize: vertical;
-    }
-    button {
-      padding: 0.5rem 1rem;
-      font-size: 1rem;
-      border: none;
-      border-radius: 0.5rem;
-      background-color: #3b82f6;
-      color: white;
-      cursor: pointer;
-      margin-right: 1rem;
-    }
-    .output {
-      margin-top: 1rem;
-      white-space: pre-wrap;
-      background: #f3f4f6;
-      padding: 1rem;
-      border-radius: 0.5rem;
-    }
-    select {
-      margin-bottom: 1rem;
-      padding: 0.5rem;
-    }
-  </style>
+  <title>忍びいろはの暗号ツール（Shinobi Iroha Cipher Tool）</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
@@ -71,58 +18,42 @@
     <textarea id="inputText" placeholder="ここにテキストを入力"></textarea>
     <div>
       <button onclick="processText()">変換</button>
+    <div style="overflow-x: auto;">
+      <table style="margin: auto; border-collapse: collapse; font-size: 1.1rem; text-align: center;">
+        <thead>
+  <tr>
+    <th style="background-color: #8b4513; color: white; padding: 0.6rem;">紫</th>
+    <th style="background-color: #8b4513; color: white; padding: 0.6rem;">黒</th>
+    <th style="background-color: #8b4513; color: white; padding: 0.6rem;">白</th>
+    <th style="background-color: #8b4513; color: white; padding: 0.6rem;">赤</th>
+    <th style="background-color: #8b4513; color: white; padding: 0.6rem;">黄</th>
+    <th style="background-color: #8b4513; color: white; padding: 0.6rem;">青</th>
+    <th style="background-color: #8b4513; color: white; padding: 0.6rem;">色</th>
+    <th></th>
+  </tr>
+</thead>
+        <tbody>
+  <tr><td>ゑ</td><td>あ</td><td>や</td><td>ら</td><td>よ</td><td>ち</td><td>い</td><td style="background-color: #8b4513; color: white;">木</td></tr>
+  <tr><td>ひ</td><td>さ</td><td>ま</td><td>む</td><td>た</td><td>り</td><td>ろ</td><td style="background-color: #8b4513; color: white;">火</td></tr>
+  <tr><td>も</td><td>き</td><td>け</td><td>う</td><td>れ</td><td>ぬ</td><td>は</td><td style="background-color: #8b4513; color: white;">土</td></tr>
+  <tr><td>せ</td><td>ゆ</td><td>ふ</td><td>ゐ</td><td>そ</td><td>る</td><td>に</td><td style="background-color: #8b4513; color: white;">金</td></tr>
+  <tr><td>す</td><td>め</td><td>こ</td><td>の</td><td>つ</td><td>を</td><td>ほ</td><td style="background-color: #8b4513; color: white;">水</td></tr>
+  <tr><td>ん</td><td>み</td><td>え</td><td>お</td><td>ね</td><td>わ</td><td>へ</td><td style="background-color: #8b4513; color: white;">人</td></tr>
+  <tr><td></td><td>し</td><td>て</td><td>く</td><td>な</td><td>か</td><td>と</td><td style="background-color: #8b4513; color: white;">身</td></tr>
+</tbody>
+      </table>
     </div>
+
     <div class="output" id="outputText"></div>
   </div>
-        <!-- フッター -->
-        <footer class="app-footer">
-            <div class="footer" style="text-align: center;">
-                🔗 GitHubリポジトリはこちら（<a href="https://github.com/ipusiron/shinobi_iroha_cipher" target="_blank" style="color: #007bff; text-decoration: none;">ipusiron/shinobi_iroha_cipher</a>）
-            </div>
-        </footer>
-  <script>
-    const IROHA_TO_PAIR = {
-      "い": { hen: "木", tsukuri: "色" }, "ろ": { hen: "火", tsukuri: "色" }, "は": { hen: "土", tsukuri: "色" },
-      "に": { hen: "金", tsukuri: "色" }, "ほ": { hen: "水", tsukuri: "色" }, "へ": { hen: "人", tsukuri: "色" },
-      "と": { hen: "身", tsukuri: "色" }, "ち": { hen: "木", tsukuri: "青" }, "り": { hen: "火", tsukuri: "青" },
-      "ぬ": { hen: "土", tsukuri: "青" }, "る": { hen: "金", tsukuri: "青" }, "を": { hen: "水", tsukuri: "青" },
-      "わ": { hen: "人", tsukuri: "青" }, "か": { hen: "身", tsukuri: "青" }, "よ": { hen: "木", tsukuri: "黄" },
-      "た": { hen: "火", tsukuri: "黄" }, "れ": { hen: "土", tsukuri: "黄" }, "そ": { hen: "金", tsukuri: "黄" },
-      "つ": { hen: "水", tsukuri: "黄" }, "ね": { hen: "人", tsukuri: "黄" }, "な": { hen: "身", tsukuri: "黄" },
-      "ら": { hen: "木", tsukuri: "赤" }, "む": { hen: "火", tsukuri: "赤" }, "う": { hen: "土", tsukuri: "赤" },
-      "ゐ": { hen: "金", tsukuri: "赤" }, "の": { hen: "水", tsukuri: "赤" }, "お": { hen: "人", tsukuri: "赤" },
-      "く": { hen: "身", tsukuri: "赤" }, "や": { hen: "木", tsukuri: "白" }, "ま": { hen: "火", tsukuri: "白" },
-      "け": { hen: "土", tsukuri: "白" }, "ふ": { hen: "金", tsukuri: "白" }, "こ": { hen: "水", tsukuri: "白" },
-      "え": { hen: "人", tsukuri: "白" }, "て": { hen: "身", tsukuri: "白" }, "あ": { hen: "木", tsukuri: "黒" },
-      "さ": { hen: "火", tsukuri: "黒" }, "き": { hen: "土", tsukuri: "黒" }, "ゆ": { hen: "金", tsukuri: "黒" },
-      "め": { hen: "水", tsukuri: "黒" }, "み": { hen: "人", tsukuri: "黒" }, "し": { hen: "身", tsukuri: "黒" },
-      "ゑ": { hen: "木", tsukuri: "紫" }, "ひ": { hen: "火", tsukuri: "紫" }, "も": { hen: "土", tsukuri: "紫" },
-      "せ": { hen: "金", tsukuri: "紫" }, "す": { hen: "水", tsukuri: "紫" }, "ん": { hen: "人", tsukuri: "紫" }
-    };
+  
+  <!-- フッター -->
+  <footer class="app-footer">
+    <div class="footer" style="text-align: center;">
+      🔗 GitHubリポジトリはこちら（<a href="https://github.com/ipusiron/shinobi_iroha_cipher" target="_blank" style="color: #007bff; text-decoration: none;">ipusiron/shinobi_iroha_cipher</a>）
+    </div>
+  </footer>
 
-    const PAIR_TO_IROHA = {};
-    for (const [kana, pair] of Object.entries(IROHA_TO_PAIR)) {
-      const key = pair.hen + pair.tsukuri;
-      PAIR_TO_IROHA[key] = kana;
-    }
-
-    function processText() {
-      const input = document.getElementById('inputText').value.trim();
-      const mode = document.getElementById('mode').value;
-      const outputDiv = document.getElementById('outputText');
-
-      if (mode === 'encrypt') {
-        const result = [...input].map(ch => {
-          const pair = IROHA_TO_PAIR[ch];
-          return pair ? pair.hen + pair.tsukuri : ch;
-        }).join(' ');
-        outputDiv.textContent = result;
-      } else {
-        const tokens = input.replace(/\s+/g, ' ').split(' ');
-        const result = tokens.map(tok => PAIR_TO_IROHA[tok] || '?').join('');
-        outputDiv.textContent = result;
-      }
-    }
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
