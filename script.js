@@ -54,6 +54,82 @@ function updateThemeIcon(theme, iconElement) {
   }
 }
 
+// クリップボードコピー機能
+async function copyToClipboard() {
+  const outputText = document.getElementById('outputText').textContent;
+  const copyButton = document.getElementById('copyButton');
+  const copyIcon = copyButton.querySelector('.copy-icon');
+  const copyText = copyButton.querySelector('.copy-text');
+  
+  if (!outputText.trim()) {
+    // 結果が空の場合
+    showCopyFeedback(copyButton, copyIcon, copyText, '空です', '❌', false);
+    return;
+  }
+
+  try {
+    // 現代のブラウザでのコピー
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(outputText);
+      showCopyFeedback(copyButton, copyIcon, copyText, 'コピー完了', '✅', true);
+    } else {
+      // フォールバック: 古いブラウザ対応
+      fallbackCopyTextToClipboard(outputText, copyButton, copyIcon, copyText);
+    }
+  } catch (err) {
+    console.error('コピーに失敗しました:', err);
+    showCopyFeedback(copyButton, copyIcon, copyText, 'コピー失敗', '❌', false);
+  }
+}
+
+// 古いブラウザ用のフォールバック
+function fallbackCopyTextToClipboard(text, button, icon, textElement) {
+  const textArea = document.createElement('textarea');
+  textArea.value = text;
+  textArea.style.position = 'fixed';
+  textArea.style.left = '-999999px';
+  textArea.style.top = '-999999px';
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+  
+  try {
+    const successful = document.execCommand('copy');
+    if (successful) {
+      showCopyFeedback(button, icon, textElement, 'コピー完了', '✅', true);
+    } else {
+      showCopyFeedback(button, icon, textElement, 'コピー失敗', '❌', false);
+    }
+  } catch (err) {
+    console.error('フォールバックコピーに失敗しました:', err);
+    showCopyFeedback(button, icon, textElement, 'コピー失敗', '❌', false);
+  }
+  
+  document.body.removeChild(textArea);
+}
+
+// コピー成功/失敗の視覚的フィードバック
+function showCopyFeedback(button, icon, textElement, message, emoji, success) {
+  const originalIcon = icon.textContent;
+  const originalText = textElement.textContent;
+  
+  // アイコンとテキストを変更
+  icon.textContent = emoji;
+  textElement.textContent = message;
+  
+  // 成功時はボタンの色を変更
+  if (success) {
+    button.classList.add('copied');
+  }
+  
+  // 1.5秒後に元に戻す
+  setTimeout(() => {
+    icon.textContent = originalIcon;
+    textElement.textContent = originalText;
+    button.classList.remove('copied');
+  }, 1500);
+}
+
 // 暗号化処理
 function processText() {
   const input = document.getElementById('inputText').value.trim();

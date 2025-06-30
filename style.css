@@ -174,8 +174,62 @@ button:not(.theme-toggle):hover {
   background: var(--bg-button-hover);
 }
 
-.output {
+.output-container {
   margin-top: 1rem;
+}
+
+.output-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.output-label {
+  font-weight: bold;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.copy-button {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+  border: none;
+  border-radius: 0.4rem;
+  background: var(--bg-button);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: auto;
+}
+
+.copy-button:hover {
+  background: var(--bg-button-hover);
+  transform: scale(1.05);
+}
+
+.copy-button:active {
+  transform: scale(0.95);
+}
+
+.copy-button.copied {
+  background: linear-gradient(to right, #10b981, #059669);
+  color: white;
+}
+
+.copy-icon {
+  font-size: 0.9rem;
+}
+
+.copy-text {
+  font-size: 0.85rem;
+}
+
+.output {
+  margin-top: 0;
   white-space: pre-wrap;
   background: var(--bg-output);
   padding: 1rem;
@@ -183,6 +237,8 @@ button:not(.theme-toggle):hover {
   color: var(--text-input);
   border: 1px solid var(--border-secondary);
   transition: all 0.3s ease;
+  min-height: 3rem;
+  word-break: break-word;
 }
 
 select {
@@ -272,5 +328,15 @@ footer a:hover {
   
   .container {
     padding: 1.5rem;
+  }
+  
+  .output-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .copy-button {
+    align-self: flex-end;
   }
 }
