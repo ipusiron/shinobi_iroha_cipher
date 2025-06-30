@@ -25,7 +25,7 @@
       <option value="decrypt">復号</option>
     </select>
 
-    <textarea id="inputText" placeholder="ここにテキストを入力"></textarea>
+    <textarea id="inputText" placeholder="ここにテキストを入力（リアルタイムで変換されます）"></textarea>
     <div>
       <button onclick="processText()">変換</button>
     </div>
@@ -45,13 +45,13 @@
           </tr>
         </thead>
         <tbody>
-          <tr><td>ゑ</td><td>あ</td><td>や</td><td>ら</td><td>よ</td><td>ち</td><td>い</td><td class="last-column">木</td></tr>
-          <tr><td>ひ</td><td>さ</td><td>ま</td><td>む</td><td>た</td><td>り</td><td>ろ</td><td class="last-column">火</td></tr>
-          <tr><td>も</td><td>き</td><td>け</td><td>う</td><td>れ</td><td>ぬ</td><td>は</td><td class="last-column">土</td></tr>
-          <tr><td>せ</td><td>ゆ</td><td>ふ</td><td>ゐ</td><td>そ</td><td>る</td><td>に</td><td class="last-column">金</td></tr>
-          <tr><td>す</td><td>め</td><td>こ</td><td>の</td><td>つ</td><td>を</td><td>ほ</td><td class="last-column">水</td></tr>
-          <tr><td>ん</td><td>み</td><td>え</td><td>お</td><td>ね</td><td>わ</td><td>へ</td><td class="last-column">人</td></tr>
-          <tr><td></td><td>し</td><td>て</td><td>く</td><td>な</td><td>か</td><td>と</td><td class="last-column">身</td></tr>
+          <tr><td data-kana="ゑ">ゑ</td><td data-kana="あ">あ</td><td data-kana="や">や</td><td data-kana="ら">ら</td><td data-kana="よ">よ</td><td data-kana="ち">ち</td><td data-kana="い">い</td><td class="last-column">木</td></tr>
+          <tr><td data-kana="ひ">ひ</td><td data-kana="さ">さ</td><td data-kana="ま">ま</td><td data-kana="む">む</td><td data-kana="た">た</td><td data-kana="り">り</td><td data-kana="ろ">ろ</td><td class="last-column">火</td></tr>
+          <tr><td data-kana="も">も</td><td data-kana="き">き</td><td data-kana="け">け</td><td data-kana="う">う</td><td data-kana="れ">れ</td><td data-kana="ぬ">ぬ</td><td data-kana="は">は</td><td class="last-column">土</td></tr>
+          <tr><td data-kana="せ">せ</td><td data-kana="ゆ">ゆ</td><td data-kana="ふ">ふ</td><td data-kana="ゐ">ゐ</td><td data-kana="そ">そ</td><td data-kana="る">る</td><td data-kana="に">に</td><td class="last-column">金</td></tr>
+          <tr><td data-kana="す">す</td><td data-kana="め">め</td><td data-kana="こ">こ</td><td data-kana="の">の</td><td data-kana="つ">つ</td><td data-kana="を">を</td><td data-kana="ほ">ほ</td><td class="last-column">水</td></tr>
+          <tr><td data-kana="ん">ん</td><td data-kana="み">み</td><td data-kana="え">え</td><td data-kana="お">お</td><td data-kana="ね">ね</td><td data-kana="わ">わ</td><td data-kana="へ">へ</td><td class="last-column">人</td></tr>
+          <tr><td data-kana=""></td><td data-kana="し">し</td><td data-kana="て">て</td><td data-kana="く">く</td><td data-kana="な">な</td><td data-kana="か">か</td><td data-kana="と">と</td><td class="last-column">身</td></tr>
         </tbody>
       </table>
     </div>
@@ -146,6 +146,8 @@
         <section class="help-section">
           <h3>💡 機能説明</h3>
           <ul>
+            <li><strong>⚡ リアルタイム変換</strong>：文字を入力すると即座に暗号化結果を表示</li>
+            <li><strong>🎯 ハイライト表示</strong>：カーソル位置の文字がテーブル上でハイライトされます</li>
             <li><strong>📋 コピーボタン</strong>：変換結果を瞬時にクリップボードにコピー</li>
             <li><strong>🌙/☀️ テーマ切り替え</strong>：ダークモード・ライトモードの切り替え</li>
             <li><strong>📱 レスポンシブ対応</strong>：スマートフォンでも快適に利用可能</li>

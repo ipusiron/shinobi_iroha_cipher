@@ -180,7 +180,78 @@ function showCopyFeedback(button, icon, textElement, message, emoji, success) {
   }, 1500);
 }
 
-// 暗号化処理
+// リアルタイム変換とハイライト機能
+function setupRealTimeConversion() {
+  const inputTextArea = document.getElementById('inputText');
+  
+  // inputイベントでリアルタイム変換
+  inputTextArea.addEventListener('input', function() {
+    processText();
+    highlightCurrentCharacter();
+  });
+  
+  // カーソル移動時のハイライト更新
+  inputTextArea.addEventListener('keyup', highlightCurrentCharacter);
+  inputTextArea.addEventListener('click', highlightCurrentCharacter);
+}
+
+// 現在のカーソル位置の文字をハイライト
+function highlightCurrentCharacter() {
+  const inputTextArea = document.getElementById('inputText');
+  const cursorPosition = inputTextArea.selectionStart;
+  const mode = document.getElementById('mode').value;
+  
+  // 前のハイライトを削除
+  clearHighlights();
+  
+  // 暗号化モードの場合のみハイライト
+  if (mode === 'encrypt' && inputTextArea.value.length > 0) {
+    // カーソル位置の文字を取得（カーソルが末尾の場合は最後の文字）
+    const charIndex = Math.max(0, Math.min(cursorPosition - 1, inputTextArea.value.length - 1));
+    const currentChar = inputTextArea.value[charIndex];
+    
+    if (currentChar) {
+      // 清音に変換してからハイライト
+      const seionChar = convertToSeion(currentChar);
+      highlightCharacterInTable(seionChar, currentChar);
+    }
+  }
+}
+
+// テーブル内の指定文字をハイライト
+function highlightCharacterInTable(seionChar, originalChar) {
+  const tableCell = document.querySelector(`td[data-kana="${seionChar}"]`);
+  
+  if (tableCell) {
+    tableCell.classList.add('highlighted');
+    
+    // 元の文字と清音が異なる場合は情報を表示
+    if (originalChar !== seionChar) {
+      console.log(`ハイライト: ${originalChar} → ${seionChar}`);
+    }
+  }
+}
+
+// すべてのハイライトを削除
+function clearHighlights() {
+  const highlightedCells = document.querySelectorAll('td.highlighted');
+  highlightedCells.forEach(cell => {
+    cell.classList.remove('highlighted');
+  });
+}
+
+// モード切り替え時のハイライト制御
+function handleModeChange() {
+  const mode = document.getElementById('mode').value;
+  
+  if (mode === 'decrypt') {
+    clearHighlights();
+  } else {
+    highlightCurrentCharacter();
+  }
+}
+
+// 暗号化処理（リアルタイム対応版）
 function processText() {
   const input = document.getElementById('inputText').value.trim();
   const mode = document.getElementById('mode').value;
@@ -196,7 +267,7 @@ function processText() {
     }).join(' ');
     
     // 変換過程を表示する場合のデバッグ情報（開発用）
-    if (seionText !== input) {
+    if (seionText !== input && input.length > 0) {
       console.log(`原文: ${input} → 清音変換後: ${seionText} → 暗号化: ${result}`);
     }
     
@@ -211,4 +282,12 @@ function processText() {
 // ページ読み込み時の初期化
 document.addEventListener('DOMContentLoaded', function() {
   initTheme();
+  setupRealTimeConversion();
+  
+  // モード選択の変更時にハイライトを制御
+  const modeSelect = document.getElementById('mode');
+  modeSelect.addEventListener('change', function() {
+    handleModeChange();
+    processText(); // モード変更時も変換を実行
+  });
 });
