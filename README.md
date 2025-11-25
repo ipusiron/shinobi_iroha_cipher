@@ -1,3 +1,38 @@
+<!--
+---
+id: day014
+slug: shinobi_iroha_cipher
+
+title: "Shinobi Iroha Cipher"
+
+subtitle_ja: "『万川集海』に登場する忍者の暗号「忍びいろは暗号」を再現"
+subtitle_en: "Recreating the Ninja Cipher from 'Bansenshukai'"
+
+description_ja: "江戸時代の忍術書『万川集海』に記載された「忍びいろは暗号」を再現したWebツール。ひらがなを漢字の偏と旁の組み合わせで暗号化・復号できます。"
+description_en: "A web tool recreating the 'Shinobi Iroha Cipher' from the Edo period ninja manual 'Bansenshukai'. Encrypts and decrypts hiragana using combinations of kanji radicals."
+
+category_ja:
+  - 古典暗号
+  - 換字式暗号
+category_en:
+  - Classical Cryptography
+  - Substitution Cipher
+
+difficulty: 1
+
+tags:
+  - cipher
+  - ninja
+  - japanese-history
+  - education
+
+repo_url: "https://github.com/ipusiron/shinobi_iroha_cipher"
+demo_url: "https://ipusiron.github.io/shinobi_iroha_cipher/"
+
+hub: true
+---
+-->
+
 # 忍びいろはの暗号ツール（Shinobi Iroha Cipher Tool）
 
 **Day14 - 生成AIで作るセキュリティツール100**
