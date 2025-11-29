@@ -166,7 +166,7 @@ textarea:focus {
   border-color: var(--text-accent);
 }
 
-button:not(.theme-toggle) {
+button:not(.theme-toggle):not(.tab-button) {
   padding: 0.5rem 1.2rem;
   font-size: 1rem;
   border: none;
@@ -177,7 +177,7 @@ button:not(.theme-toggle) {
   transition: all 0.3s ease;
 }
 
-button:not(.theme-toggle):hover {
+button:not(.theme-toggle):not(.tab-button):hover {
   background: var(--bg-button-hover);
 }
 
@@ -256,6 +256,94 @@ select {
   border: 1px solid var(--border-secondary);
   border-radius: 0.4rem;
   transition: all 0.3s ease;
+}
+
+/* タブナビゲーション */
+.tab-navigation {
+  display: flex;
+  gap: 0;
+  margin-bottom: 0;
+  border-bottom: 3px solid var(--text-accent);
+}
+
+.tab-button {
+  padding: 0.875rem 1.75rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 0.5rem 0.5rem 0 0 !important;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  margin-right: 2px;
+}
+
+.tab-button:hover:not(.active) {
+  background: var(--bg-button);
+  color: var(--text-primary);
+}
+
+.tab-button.active {
+  background: var(--text-accent);
+  color: #fff;
+  font-weight: bold;
+}
+
+/* タブコンテンツ */
+.tab-content {
+  display: none;
+  padding-top: 1.5rem;
+}
+
+.tab-content.active {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+/* 置換表タブ用スタイル */
+.table-description {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.table-description p {
+  margin: 0;
+}
+
+.conversion-rules {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: var(--bg-tertiary);
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-secondary);
+}
+
+.conversion-rules h3 {
+  margin: 0 0 0.75rem 0;
+  color: var(--text-accent);
+  font-size: 1.1rem;
+}
+
+.conversion-rules p {
+  margin: 0 0 0.75rem 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.conversion-rules ul {
+  margin: 0;
+  padding-left: 1.5rem;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.conversion-rules li {
+  margin-bottom: 0.25rem;
 }
 
 .table-container {
@@ -506,47 +594,56 @@ footer a:hover {
     align-items: center;
     gap: 1rem;
   }
-  
+
   .header-buttons {
     order: -1;
     align-self: flex-end;
   }
-  
+
   h1 {
     font-size: 1.5rem;
   }
-  
+
   body {
     padding: 1rem;
   }
-  
+
   .container {
     padding: 1.5rem;
   }
-  
+
+  .tab-navigation {
+    gap: 0.25rem;
+  }
+
+  .tab-button {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+
   .output-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
   }
-  
+
   .copy-button {
     align-self: flex-end;
   }
-  
+
   .modal-content {
     margin: 0.5rem;
     max-height: 90vh;
   }
-  
+
   .modal-header {
     padding: 1rem 1.5rem 0.8rem 1.5rem;
   }
-  
+
   .modal-header h2 {
     font-size: 1.3rem;
   }
-  
+
   .modal-body {
     padding: 1.5rem;
     max-height: 70vh;

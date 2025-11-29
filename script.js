@@ -218,13 +218,13 @@ function highlightCurrentCharacter() {
   }
 }
 
-// テーブル内の指定文字をハイライト
+// テーブル内の指定文字をハイライト（暗号化・復号タブの置換表のみ）
 function highlightCharacterInTable(seionChar, originalChar) {
-  const tableCell = document.querySelector(`td[data-kana="${seionChar}"]`);
-  
+  const tableCell = document.querySelector(`#cipherTable td[data-kana="${seionChar}"]`);
+
   if (tableCell) {
     tableCell.classList.add('highlighted');
-    
+
     // 元の文字と清音が異なる場合は情報を表示
     if (originalChar !== seionChar) {
       console.log(`ハイライト: ${originalChar} → ${seionChar}`);
@@ -232,9 +232,9 @@ function highlightCharacterInTable(seionChar, originalChar) {
   }
 }
 
-// すべてのハイライトを削除
+// すべてのハイライトを削除（暗号化・復号タブの置換表のみ）
 function clearHighlights() {
-  const highlightedCells = document.querySelectorAll('td.highlighted');
+  const highlightedCells = document.querySelectorAll('#cipherTable td.highlighted');
   highlightedCells.forEach(cell => {
     cell.classList.remove('highlighted');
   });
@@ -279,11 +279,38 @@ function processText() {
   }
 }
 
+// タブ切り替え機能
+function switchTab(tabName) {
+  // すべてのタブボタンからactiveを削除
+  const tabButtons = document.querySelectorAll('.tab-button');
+  tabButtons.forEach(button => {
+    button.classList.remove('active');
+  });
+
+  // クリックされたタブボタンにactiveを追加
+  const activeButton = document.querySelector(`.tab-button[data-tab="${tabName}"]`);
+  if (activeButton) {
+    activeButton.classList.add('active');
+  }
+
+  // すべてのタブコンテンツを非表示
+  const tabContents = document.querySelectorAll('.tab-content');
+  tabContents.forEach(content => {
+    content.classList.remove('active');
+  });
+
+  // 選択されたタブコンテンツを表示
+  const activeContent = document.getElementById(`${tabName}-tab`);
+  if (activeContent) {
+    activeContent.classList.add('active');
+  }
+}
+
 // ページ読み込み時の初期化
 document.addEventListener('DOMContentLoaded', function() {
   initTheme();
   setupRealTimeConversion();
-  
+
   // モード選択の変更時にハイライトを制御
   const modeSelect = document.getElementById('mode');
   modeSelect.addEventListener('change', function() {

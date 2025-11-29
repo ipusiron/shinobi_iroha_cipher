@@ -19,55 +19,110 @@
         </button>
       </div>
     </div>
-    <label for="mode">モード選択:</label>
-    <select id="mode">
-      <option value="encrypt">暗号化</option>
-      <option value="decrypt">復号</option>
-    </select>
 
-    <textarea id="inputText" placeholder="ここにテキストを入力（リアルタイムで変換されます）"></textarea>
-    <div>
-      <button onclick="processText()">変換</button>
-    </div>
-    
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>紫</th>
-            <th>黒</th>
-            <th>白</th>
-            <th>赤</th>
-            <th>黄</th>
-            <th>青</th>
-            <th>色</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td data-kana="ゑ">ゑ</td><td data-kana="あ">あ</td><td data-kana="や">や</td><td data-kana="ら">ら</td><td data-kana="よ">よ</td><td data-kana="ち">ち</td><td data-kana="い">い</td><td class="last-column">木</td></tr>
-          <tr><td data-kana="ひ">ひ</td><td data-kana="さ">さ</td><td data-kana="ま">ま</td><td data-kana="む">む</td><td data-kana="た">た</td><td data-kana="り">り</td><td data-kana="ろ">ろ</td><td class="last-column">火</td></tr>
-          <tr><td data-kana="も">も</td><td data-kana="き">き</td><td data-kana="け">け</td><td data-kana="う">う</td><td data-kana="れ">れ</td><td data-kana="ぬ">ぬ</td><td data-kana="は">は</td><td class="last-column">土</td></tr>
-          <tr><td data-kana="せ">せ</td><td data-kana="ゆ">ゆ</td><td data-kana="ふ">ふ</td><td data-kana="ゐ">ゐ</td><td data-kana="そ">そ</td><td data-kana="る">る</td><td data-kana="に">に</td><td class="last-column">金</td></tr>
-          <tr><td data-kana="す">す</td><td data-kana="め">め</td><td data-kana="こ">こ</td><td data-kana="の">の</td><td data-kana="つ">つ</td><td data-kana="を">を</td><td data-kana="ほ">ほ</td><td class="last-column">水</td></tr>
-          <tr><td data-kana="ん">ん</td><td data-kana="み">み</td><td data-kana="え">え</td><td data-kana="お">お</td><td data-kana="ね">ね</td><td data-kana="わ">わ</td><td data-kana="へ">へ</td><td class="last-column">人</td></tr>
-          <tr><td data-kana=""></td><td data-kana="し">し</td><td data-kana="て">て</td><td data-kana="く">く</td><td data-kana="な">な</td><td data-kana="か">か</td><td data-kana="と">と</td><td class="last-column">身</td></tr>
-        </tbody>
-      </table>
+    <!-- タブナビゲーション -->
+    <div class="tab-navigation">
+      <button class="tab-button active" data-tab="cipher" onclick="switchTab('cipher')">暗号化・復号</button>
+      <button class="tab-button" data-tab="table" onclick="switchTab('table')">置換表</button>
     </div>
 
-    <div class="output-container">
-      <div class="output-header">
-        <span class="output-label">変換結果:</span>
-        <button id="copyButton" class="copy-button" onclick="copyToClipboard()" title="結果をコピー">
-          <span class="copy-icon">📋</span>
-          <span class="copy-text">コピー</span>
-        </button>
+    <!-- 暗号化・復号タブ -->
+    <div id="cipher-tab" class="tab-content active">
+      <label for="mode">モード選択:</label>
+      <select id="mode">
+        <option value="encrypt">暗号化</option>
+        <option value="decrypt">復号</option>
+      </select>
+
+      <textarea id="inputText" placeholder="ここにテキストを入力（リアルタイムで変換されます）"></textarea>
+      <div>
+        <button onclick="processText()">変換</button>
       </div>
-      <div class="output" id="outputText"></div>
+
+      <div class="table-container">
+        <table id="cipherTable">
+          <thead>
+            <tr>
+              <th>紫</th>
+              <th>黒</th>
+              <th>白</th>
+              <th>赤</th>
+              <th>黄</th>
+              <th>青</th>
+              <th>色</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td data-kana="ゑ">ゑ</td><td data-kana="あ">あ</td><td data-kana="や">や</td><td data-kana="ら">ら</td><td data-kana="よ">よ</td><td data-kana="ち">ち</td><td data-kana="い">い</td><td class="last-column">木</td></tr>
+            <tr><td data-kana="ひ">ひ</td><td data-kana="さ">さ</td><td data-kana="ま">ま</td><td data-kana="む">む</td><td data-kana="た">た</td><td data-kana="り">り</td><td data-kana="ろ">ろ</td><td class="last-column">火</td></tr>
+            <tr><td data-kana="も">も</td><td data-kana="き">き</td><td data-kana="け">け</td><td data-kana="う">う</td><td data-kana="れ">れ</td><td data-kana="ぬ">ぬ</td><td data-kana="は">は</td><td class="last-column">土</td></tr>
+            <tr><td data-kana="せ">せ</td><td data-kana="ゆ">ゆ</td><td data-kana="ふ">ふ</td><td data-kana="ゐ">ゐ</td><td data-kana="そ">そ</td><td data-kana="る">る</td><td data-kana="に">に</td><td class="last-column">金</td></tr>
+            <tr><td data-kana="す">す</td><td data-kana="め">め</td><td data-kana="こ">こ</td><td data-kana="の">の</td><td data-kana="つ">つ</td><td data-kana="を">を</td><td data-kana="ほ">ほ</td><td class="last-column">水</td></tr>
+            <tr><td data-kana="ん">ん</td><td data-kana="み">み</td><td data-kana="え">え</td><td data-kana="お">お</td><td data-kana="ね">ね</td><td data-kana="わ">わ</td><td data-kana="へ">へ</td><td class="last-column">人</td></tr>
+            <tr><td data-kana=""></td><td data-kana="し">し</td><td data-kana="て">て</td><td data-kana="く">く</td><td data-kana="な">な</td><td data-kana="か">か</td><td data-kana="と">と</td><td class="last-column">身</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="output-container">
+        <div class="output-header">
+          <span class="output-label">変換結果:</span>
+          <button id="copyButton" class="copy-button" onclick="copyToClipboard()" title="結果をコピー">
+            <span class="copy-icon">📋</span>
+            <span class="copy-text">コピー</span>
+          </button>
+        </div>
+        <div class="output" id="outputText"></div>
+      </div>
+    </div>
+
+    <!-- 置換表タブ -->
+    <div id="table-tab" class="tab-content">
+      <div class="table-description">
+        <p>縦軸（右端）が<strong>偏（へん）</strong>、横軸（上部）が<strong>旁（つくり）</strong>を表します。<br>
+        交点のひらがなが暗号化対象の文字です。</p>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>紫</th>
+              <th>黒</th>
+              <th>白</th>
+              <th>赤</th>
+              <th>黄</th>
+              <th>青</th>
+              <th>色</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td data-kana="ゑ">ゑ</td><td data-kana="あ">あ</td><td data-kana="や">や</td><td data-kana="ら">ら</td><td data-kana="よ">よ</td><td data-kana="ち">ち</td><td data-kana="い">い</td><td class="last-column">木</td></tr>
+            <tr><td data-kana="ひ">ひ</td><td data-kana="さ">さ</td><td data-kana="ま">ま</td><td data-kana="む">む</td><td data-kana="た">た</td><td data-kana="り">り</td><td data-kana="ろ">ろ</td><td class="last-column">火</td></tr>
+            <tr><td data-kana="も">も</td><td data-kana="き">き</td><td data-kana="け">け</td><td data-kana="う">う</td><td data-kana="れ">れ</td><td data-kana="ぬ">ぬ</td><td data-kana="は">は</td><td class="last-column">土</td></tr>
+            <tr><td data-kana="せ">せ</td><td data-kana="ゆ">ゆ</td><td data-kana="ふ">ふ</td><td data-kana="ゐ">ゐ</td><td data-kana="そ">そ</td><td data-kana="る">る</td><td data-kana="に">に</td><td class="last-column">金</td></tr>
+            <tr><td data-kana="す">す</td><td data-kana="め">め</td><td data-kana="こ">こ</td><td data-kana="の">の</td><td data-kana="つ">つ</td><td data-kana="を">を</td><td data-kana="ほ">ほ</td><td class="last-column">水</td></tr>
+            <tr><td data-kana="ん">ん</td><td data-kana="み">み</td><td data-kana="え">え</td><td data-kana="お">お</td><td data-kana="ね">ね</td><td data-kana="わ">わ</td><td data-kana="へ">へ</td><td class="last-column">人</td></tr>
+            <tr><td data-kana=""></td><td data-kana="し">し</td><td data-kana="て">て</td><td data-kana="く">く</td><td data-kana="な">な</td><td data-kana="か">か</td><td data-kana="と">と</td><td class="last-column">身</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="conversion-rules">
+        <h3>自動清音変換ルール</h3>
+        <p>忍びいろは暗号表にない文字は、以下のルールで自動的に清音に変換されます：</p>
+        <ul>
+          <li><strong>濁点：</strong> が→か、ざ→さ、だ→た、ば→は</li>
+          <li><strong>半濁点：</strong> ぱ→は、ぴ→ひ、ぷ→ふ、ぺ→へ、ぽ→ほ</li>
+          <li><strong>促音：</strong> っ→つ</li>
+          <li><strong>長音：</strong> ー→削除</li>
+          <li><strong>小文字：</strong> ゃ→や、ゅ→ゆ、ょ→よ、ぁ→あ など</li>
+        </ul>
+      </div>
     </div>
   </div>
-  
+
   <!-- フッター -->
   <footer class="app-footer">
     <div class="footer">
@@ -104,7 +159,7 @@
               例：「だいじょうぶ」→「たいしようふ」→「火黄 木色 身黒 木黄 土赤 金白」
             </div>
           </div>
-          
+
           <div class="usage-step">
             <h4>復号の場合：</h4>
             <ol>
@@ -147,7 +202,6 @@
           <h3>💡 機能説明</h3>
           <ul>
             <li><strong>⚡ リアルタイム変換</strong>：文字を入力すると即座に暗号化結果を表示</li>
-            <li><strong>🎯 ハイライト表示</strong>：カーソル位置の文字がテーブル上でハイライトされます</li>
             <li><strong>📋 コピーボタン</strong>：変換結果を瞬時にクリップボードにコピー</li>
             <li><strong>🌙/☀️ テーマ切り替え</strong>：ダークモード・ライトモードの切り替え</li>
             <li><strong>📱 レスポンシブ対応</strong>：スマートフォンでも快適に利用可能</li>
