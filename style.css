@@ -305,13 +305,43 @@ select {
 /* 置換表タブ用スタイル */
 .table-description {
   text-align: center;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   color: var(--text-secondary);
   line-height: 1.6;
 }
 
 .table-description p {
   margin: 0;
+}
+
+.table-section {
+  margin-bottom: 2rem;
+}
+
+.table-title {
+  text-align: center;
+  color: var(--text-accent);
+  font-size: 1.2rem;
+  margin: 0 0 0.5rem 0;
+}
+
+.table-subtitle {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin: 0 0 1rem 0;
+}
+
+.shinobi-image-container {
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.shinobi-table-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 10px var(--shadow-table);
 }
 
 .conversion-rules {

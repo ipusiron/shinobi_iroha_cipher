@@ -80,33 +80,45 @@
     <!-- 置換表タブ -->
     <div id="table-tab" class="tab-content">
       <div class="table-description">
-        <p>縦軸（右端）が<strong>偏（へん）</strong>、横軸（上部）が<strong>旁（つくり）</strong>を表します。<br>
-        交点のひらがなが暗号化対象の文字です。</p>
+        <p>下の2つの表を見比べることで、平文文字（いろは仮名）と暗号文文字（忍びいろは）の対応関係がわかります。</p>
       </div>
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>紫</th>
-              <th>黒</th>
-              <th>白</th>
-              <th>赤</th>
-              <th>黄</th>
-              <th>青</th>
-              <th>色</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td data-kana="ゑ">ゑ</td><td data-kana="あ">あ</td><td data-kana="や">や</td><td data-kana="ら">ら</td><td data-kana="よ">よ</td><td data-kana="ち">ち</td><td data-kana="い">い</td><td class="last-column">木</td></tr>
-            <tr><td data-kana="ひ">ひ</td><td data-kana="さ">さ</td><td data-kana="ま">ま</td><td data-kana="む">む</td><td data-kana="た">た</td><td data-kana="り">り</td><td data-kana="ろ">ろ</td><td class="last-column">火</td></tr>
-            <tr><td data-kana="も">も</td><td data-kana="き">き</td><td data-kana="け">け</td><td data-kana="う">う</td><td data-kana="れ">れ</td><td data-kana="ぬ">ぬ</td><td data-kana="は">は</td><td class="last-column">土</td></tr>
-            <tr><td data-kana="せ">せ</td><td data-kana="ゆ">ゆ</td><td data-kana="ふ">ふ</td><td data-kana="ゐ">ゐ</td><td data-kana="そ">そ</td><td data-kana="る">る</td><td data-kana="に">に</td><td class="last-column">金</td></tr>
-            <tr><td data-kana="す">す</td><td data-kana="め">め</td><td data-kana="こ">こ</td><td data-kana="の">の</td><td data-kana="つ">つ</td><td data-kana="を">を</td><td data-kana="ほ">ほ</td><td class="last-column">水</td></tr>
-            <tr><td data-kana="ん">ん</td><td data-kana="み">み</td><td data-kana="え">え</td><td data-kana="お">お</td><td data-kana="ね">ね</td><td data-kana="わ">わ</td><td data-kana="へ">へ</td><td class="last-column">人</td></tr>
-            <tr><td data-kana=""></td><td data-kana="し">し</td><td data-kana="て">て</td><td data-kana="く">く</td><td data-kana="な">な</td><td data-kana="か">か</td><td data-kana="と">と</td><td class="last-column">身</td></tr>
-          </tbody>
-        </table>
+
+      <div class="table-section">
+        <h3 class="table-title">いろは仮名（平文）</h3>
+        <p class="table-subtitle">縦軸（右端）が<strong>偏（へん）</strong>、横軸（上部）が<strong>旁（つくり）</strong></p>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>紫</th>
+                <th>黒</th>
+                <th>白</th>
+                <th>赤</th>
+                <th>黄</th>
+                <th>青</th>
+                <th>色</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>ゑ</td><td>あ</td><td>や</td><td>ら</td><td>よ</td><td>ち</td><td>い</td><td class="last-column">木</td></tr>
+              <tr><td>ひ</td><td>さ</td><td>ま</td><td>む</td><td>た</td><td>り</td><td>ろ</td><td class="last-column">火</td></tr>
+              <tr><td>も</td><td>き</td><td>け</td><td>う</td><td>れ</td><td>ぬ</td><td>は</td><td class="last-column">土</td></tr>
+              <tr><td>せ</td><td>ゆ</td><td>ふ</td><td>ゐ</td><td>そ</td><td>る</td><td>に</td><td class="last-column">金</td></tr>
+              <tr><td>す</td><td>め</td><td>こ</td><td>の</td><td>つ</td><td>を</td><td>ほ</td><td class="last-column">水</td></tr>
+              <tr><td>ん</td><td>み</td><td>え</td><td>お</td><td>ね</td><td>わ</td><td>へ</td><td class="last-column">人</td></tr>
+              <tr><td></td><td>し</td><td>て</td><td>く</td><td>な</td><td>か</td><td>と</td><td class="last-column">身</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="table-section">
+        <h3 class="table-title">忍びいろは（暗号文）</h3>
+        <p class="table-subtitle">同じ位置にある文字同士が対応します</p>
+        <div class="shinobi-image-container">
+          <img src="assets/substitution_table.png" alt="忍びいろはの構成表" class="shinobi-table-image">
+        </div>
       </div>
 
       <div class="conversion-rules">
