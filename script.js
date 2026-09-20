@@ -1,58 +1,19 @@
-// 濁点・半濁点・促音を清音に変換するマッピング
-const DAKUTEN_TO_SEION = {
-  // 濁点 (が行)
-  'が': 'か', 'ぎ': 'き', 'ぐ': 'く', 'げ': 'け', 'ご': 'こ',
-  // 濁点 (ざ行)
-  'ざ': 'さ', 'じ': 'し', 'ず': 'す', 'ぜ': 'せ', 'ぞ': 'そ',
-  // 濁点 (だ行)
-  'だ': 'た', 'ぢ': 'ち', 'づ': 'つ', 'で': 'て', 'ど': 'と',
-  // 濁点 (ば行)
-  'ば': 'は', 'び': 'ひ', 'ぶ': 'ふ', 'べ': 'へ', 'ぼ': 'ほ',
-  // 半濁点 (ぱ行)
-  'ぱ': 'は', 'ぴ': 'ひ', 'ぷ': 'ふ', 'ぺ': 'へ', 'ぽ': 'ほ',
-  // 促音・長音
-  'っ': 'つ',
-  'ー': '', // 長音は除去
-  // その他特殊文字
-  'ゃ': 'や', 'ゅ': 'ゆ', 'ょ': 'よ',
-  'ぁ': 'あ', 'ぃ': 'い', 'ぅ': 'う', 'ぇ': 'え', 'ぉ': 'お'
-};
+'use strict';
 
-// 文字を清音に変換する関数
-function convertToSeion(text) {
-  return [...text].map(char => DAKUTEN_TO_SEION[char] || char).join('');
-}
-
-const IROHA_TO_PAIR = {
-  "い": { hen: "木", tsukuri: "色" }, "ろ": { hen: "火", tsukuri: "色" }, "は": { hen: "土", tsukuri: "色" },
-  "に": { hen: "金", tsukuri: "色" }, "ほ": { hen: "水", tsukuri: "色" }, "へ": { hen: "人", tsukuri: "色" },
-  "と": { hen: "身", tsukuri: "色" }, "ち": { hen: "木", tsukuri: "青" }, "り": { hen: "火", tsukuri: "青" },
-  "ぬ": { hen: "土", tsukuri: "青" }, "る": { hen: "金", tsukuri: "青" }, "を": { hen: "水", tsukuri: "青" },
-  "わ": { hen: "人", tsukuri: "青" }, "か": { hen: "身", tsukuri: "青" }, "よ": { hen: "木", tsukuri: "黄" },
-  "た": { hen: "火", tsukuri: "黄" }, "れ": { hen: "土", tsukuri: "黄" }, "そ": { hen: "金", tsukuri: "黄" },
-  "つ": { hen: "水", tsukuri: "黄" }, "ね": { hen: "人", tsukuri: "黄" }, "な": { hen: "身", tsukuri: "黄" },
-  "ら": { hen: "木", tsukuri: "赤" }, "む": { hen: "火", tsukuri: "赤" }, "う": { hen: "土", tsukuri: "赤" },
-  "ゐ": { hen: "金", tsukuri: "赤" }, "の": { hen: "水", tsukuri: "赤" }, "お": { hen: "人", tsukuri: "赤" },
-  "く": { hen: "身", tsukuri: "赤" }, "や": { hen: "木", tsukuri: "白" }, "ま": { hen: "火", tsukuri: "白" },
-  "け": { hen: "土", tsukuri: "白" }, "ふ": { hen: "金", tsukuri: "白" }, "こ": { hen: "水", tsukuri: "白" },
-  "え": { hen: "人", tsukuri: "白" }, "て": { hen: "身", tsukuri: "白" }, "あ": { hen: "木", tsukuri: "黒" },
-  "さ": { hen: "火", tsukuri: "黒" }, "き": { hen: "土", tsukuri: "黒" }, "ゆ": { hen: "金", tsukuri: "黒" },
-  "め": { hen: "水", tsukuri: "黒" }, "み": { hen: "人", tsukuri: "黒" }, "し": { hen: "身", tsukuri: "黒" },
-  "ゑ": { hen: "木", tsukuri: "紫" }, "ひ": { hen: "火", tsukuri: "紫" }, "も": { hen: "土", tsukuri: "紫" },
-  "せ": { hen: "金", tsukuri: "紫" }, "す": { hen: "水", tsukuri: "紫" }, "ん": { hen: "人", tsukuri: "紫" }
-};
-
-const PAIR_TO_IROHA = {};
-for (const [kana, pair] of Object.entries(IROHA_TO_PAIR)) {
-  const key = pair.hen + pair.tsukuri;
-  PAIR_TO_IROHA[key] = kana;
-}
+let copyFeedbackTimer;
+let themeAnimationTimer;
+let helpReturnFocus;
 
 // ヘルプモーダル関連
 function openHelpModal() {
   const modal = document.getElementById('helpModal');
+  helpReturnFocus = document.activeElement;
+  modal.hidden = false;
   modal.classList.add('show');
-  document.body.style.overflow = 'hidden'; // スクロールを無効化
+  document.body.classList.add('modal-open');
+  document.querySelector('.container').inert = true;
+  document.querySelector('.app-footer').inert = true;
+  modal.querySelector('.modal-close').focus();
 }
 
 function closeHelpModal(event) {
@@ -62,20 +23,45 @@ function closeHelpModal(event) {
   }
   
   const modal = document.getElementById('helpModal');
+  if (modal.hidden) return;
   modal.classList.remove('show');
-  document.body.style.overflow = ''; // スクロールを再有効化
+  modal.hidden = true;
+  document.body.classList.remove('modal-open');
+  document.querySelector('.container').inert = false;
+  document.querySelector('.app-footer').inert = false;
+  (helpReturnFocus || document.getElementById('helpButton')).focus();
 }
 
-// ESCキーでモーダルを閉じる
-document.addEventListener('keydown', function(event) {
+// 開いているモーダルの中でフォーカスを循環させる
+function handleModalKeydown(event) {
+  const modal = document.getElementById('helpModal');
+  if (modal.hidden) return;
   if (event.key === 'Escape') {
+    event.preventDefault();
     closeHelpModal();
+  } else if (event.key === 'Tab') {
+    const items = [...modal.querySelectorAll('button, a[href], input, select, textarea, [tabindex="0"]')];
+    const first = items[0];
+    const last = items[items.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
   }
-});
+}
 
 // テーマ管理
 function initTheme() {
-  const savedTheme = localStorage.getItem('theme') || 'light';
+  let savedTheme = 'light';
+  try {
+    const value = localStorage.getItem('theme');
+    if (value === 'light' || value === 'dark') savedTheme = value;
+  } catch {
+    // 保存領域が使えなくても変換は続ける
+  }
   const body = document.body;
   const themeIcon = document.querySelector('.theme-icon');
   
@@ -90,17 +76,23 @@ function toggleTheme() {
   const themeIcon = document.querySelector('.theme-icon');
   
   body.setAttribute('data-theme', newTheme);
-  localStorage.setItem('theme', newTheme);
+  try {
+    localStorage.setItem('theme', newTheme);
+  } catch {
+    // テーマはこのページを開いている間だけ適用する
+  }
   updateThemeIcon(newTheme, themeIcon);
 }
 
 function updateThemeIcon(theme, iconElement) {
+  const toggle = document.getElementById('themeToggle');
+  toggle.setAttribute('aria-pressed', String(theme === 'dark'));
+  toggle.setAttribute('aria-label', theme === 'dark' ? 'ライトモードに切り替える' : 'ダークモードに切り替える');
   if (iconElement) {
     iconElement.textContent = theme === 'light' ? '🌙' : '☀️';
-    iconElement.style.transform = 'rotate(360deg)';
-    setTimeout(() => {
-      iconElement.style.transform = 'rotate(0deg)';
-    }, 300);
+    clearTimeout(themeAnimationTimer);
+    iconElement.classList.add('spin');
+    themeAnimationTimer = setTimeout(() => iconElement.classList.remove('spin'), 300);
   }
 }
 
@@ -118,27 +110,26 @@ async function copyToClipboard() {
   }
 
   try {
-    // 現代のブラウザでのコピー
-    if (navigator.clipboard && window.isSecureContext) {
+    // 現代のブラウザーでのコピー
+    if (navigator.clipboard?.writeText && window.isSecureContext) {
       await navigator.clipboard.writeText(outputText);
       showCopyFeedback(copyButton, copyIcon, copyText, 'コピー完了', '✅', true);
     } else {
-      // フォールバック: 古いブラウザ対応
+      // フォールバック: 古いブラウザー対応
       fallbackCopyTextToClipboard(outputText, copyButton, copyIcon, copyText);
     }
   } catch (err) {
-    console.error('コピーに失敗しました:', err);
+    // 失敗の詳細や入力内容はコンソールへ出さない
     showCopyFeedback(copyButton, copyIcon, copyText, 'コピー失敗', '❌', false);
   }
 }
 
-// 古いブラウザ用のフォールバック
+// 古いブラウザー用のフォールバック
 function fallbackCopyTextToClipboard(text, button, icon, textElement) {
   const textArea = document.createElement('textarea');
   textArea.value = text;
-  textArea.style.position = 'fixed';
-  textArea.style.left = '-999999px';
-  textArea.style.top = '-999999px';
+  textArea.classList.add('clipboard-fallback');
+  const previousFocus = document.activeElement;
   document.body.appendChild(textArea);
   textArea.focus();
   textArea.select();
@@ -151,31 +142,32 @@ function fallbackCopyTextToClipboard(text, button, icon, textElement) {
       showCopyFeedback(button, icon, textElement, 'コピー失敗', '❌', false);
     }
   } catch (err) {
-    console.error('フォールバックコピーに失敗しました:', err);
+    // 古いブラウザーでの失敗も画面で知らせる
     showCopyFeedback(button, icon, textElement, 'コピー失敗', '❌', false);
   }
   
   document.body.removeChild(textArea);
+  previousFocus?.focus();
 }
 
 // コピー成功/失敗の視覚的フィードバック
 function showCopyFeedback(button, icon, textElement, message, emoji, success) {
-  const originalIcon = icon.textContent;
-  const originalText = textElement.textContent;
+  clearTimeout(copyFeedbackTimer);
+  document.getElementById('resultMessage').textContent = success
+    ? 'コピーしました'
+    : 'コピーできませんでした。結果を選択してコピーしてください';
   
   // アイコンとテキストを変更
   icon.textContent = emoji;
   textElement.textContent = message;
   
   // 成功時はボタンの色を変更
-  if (success) {
-    button.classList.add('copied');
-  }
+  button.classList.toggle('copied', success);
   
   // 1.5秒後に元に戻す
-  setTimeout(() => {
-    icon.textContent = originalIcon;
-    textElement.textContent = originalText;
+  copyFeedbackTimer = setTimeout(() => {
+    icon.textContent = '📋';
+    textElement.textContent = 'コピー';
     button.classList.remove('copied');
   }, 1500);
 }
@@ -204,32 +196,19 @@ function highlightCurrentCharacter() {
   // 前のハイライトを削除
   clearHighlights();
   
-  // 暗号化モードの場合のみハイライト
-  if (mode === 'encrypt' && inputTextArea.value.length > 0) {
-    // カーソル位置の文字を取得（カーソルが末尾の場合は最後の文字）
-    const charIndex = Math.max(0, Math.min(cursorPosition - 1, inputTextArea.value.length - 1));
-    const currentChar = inputTextArea.value[charIndex];
-    
-    if (currentChar) {
-      // 清音に変換してからハイライト
-      const seionChar = convertToSeion(currentChar);
-      highlightCharacterInTable(seionChar, currentChar);
-    }
-  }
+  const input = [...inputTextArea.value].slice(0, 10000).join('');
+  if (cursorPosition > input.length) return;
+  const kana = mode === 'encrypt'
+    ? ShinobiLogic.kanaAtCursor(input, cursorPosition)
+    : ShinobiLogic.PAIR_TO_IROHA[ShinobiLogic.tokenAtCursor(input, cursorPosition)];
+  highlightCharacterInTable(kana);
 }
 
-// テーブル内の指定文字をハイライト（暗号化・復号タブの置換表のみ）
-function highlightCharacterInTable(seionChar, originalChar) {
-  const tableCell = document.querySelector(`#cipherTable td[data-kana="${seionChar}"]`);
-
-  if (tableCell) {
-    tableCell.classList.add('highlighted');
-
-    // 元の文字と清音が異なる場合は情報を表示
-    if (originalChar !== seionChar) {
-      console.log(`ハイライト: ${originalChar} → ${seionChar}`);
-    }
-  }
+// テーブル内の指定文字をハイライト（入力をセレクターに埋め込まない）
+function highlightCharacterInTable(kana) {
+  if (!kana || typeof kana !== 'string') return;
+  const cell = [...document.querySelectorAll('#cipherTable td[data-kana]')].find(td => td.dataset.kana === kana);
+  if (cell) cell.classList.add('highlighted');
 }
 
 // すべてのハイライトを削除（暗号化・復号タブの置換表のみ）
@@ -242,68 +221,70 @@ function clearHighlights() {
 
 // モード切り替え時のハイライト制御
 function handleModeChange() {
-  const mode = document.getElementById('mode').value;
-  
-  if (mode === 'decrypt') {
-    clearHighlights();
-  } else {
-    highlightCurrentCharacter();
-  }
+  processText();
+  highlightCurrentCharacter();
 }
 
 // 暗号化処理（リアルタイム対応版）
 function processText() {
-  const input = document.getElementById('inputText').value.trim();
+  const original = document.getElementById('inputText').value;
+  const chars = [...original];
+  const input = chars.slice(0, 10000).join('');
   const mode = document.getElementById('mode').value;
   const outputDiv = document.getElementById('outputText');
+  const messages = [];
+  if (chars.length > 10000) messages.push('入力は10,000文字までです。先頭10,000文字だけ変換しました。');
 
   if (mode === 'encrypt') {
-    // 暗号化前に濁点・半濁点・促音を清音に変換
-    const seionText = convertToSeion(input);
-    
-    const result = [...seionText].map(ch => {
-      const pair = IROHA_TO_PAIR[ch];
-      return pair ? pair.hen + pair.tsukuri : ch;
-    }).join(' ');
-    
-    // 変換過程を表示する場合のデバッグ情報（開発用）
-    if (seionText !== input && input.length > 0) {
-      console.log(`原文: ${input} → 清音変換後: ${seionText} → 暗号化: ${result}`);
+    const result = ShinobiLogic.encrypt(input);
+    outputDiv.textContent = result.cipher;
+    if (result.seion !== input.normalize('NFKC')) {
+      const short = value => [...value].slice(0, 80).join('').replace(/\s+/gu, ' ') + ([...value].length > 80 ? '…' : '');
+      messages.push('清音に直してから変換しました：' + short(input) + ' → ' + short(result.seion));
     }
-    
-    outputDiv.textContent = result;
+    if (result.skipped.length) {
+      const shown = result.skipped.slice(0, 10).join(' ');
+      const more = result.skipped.length > 10 ? ' ほか' : '';
+      messages.push('変換できない文字を除きました：' + shown + more + '（' + result.skipped.length + '文字）');
+    }
   } else {
-    const tokens = input.replace(/\s+/g, ' ').split(' ');
-    const result = tokens.map(tok => PAIR_TO_IROHA[tok] || '?').join('');
-    outputDiv.textContent = result;
+    const result = ShinobiLogic.decrypt(input);
+    outputDiv.textContent = result.plain;
+    if (result.unknown.length) {
+      const shown = result.unknown.slice(0, 10).map(token => [...token].slice(0, 80).join('')).join(' ');
+      const more = result.unknown.length > 10 ? ' ほか' : '';
+      messages.push('復号できないかたまりがあります：' + shown + more + '（' + result.unknown.length + '個）');
+    }
   }
+  document.getElementById('resultMessage').textContent = messages.join('／');
+  highlightCurrentCharacter();
 }
 
 // タブ切り替え機能
 function switchTab(tabName) {
-  // すべてのタブボタンからactiveを削除
-  const tabButtons = document.querySelectorAll('.tab-button');
+  const tabButtons = [...document.querySelectorAll('.tab-button')];
+  if (!tabButtons.some(button => button.dataset.tab === tabName)) return;
   tabButtons.forEach(button => {
-    button.classList.remove('active');
+    const active = button.dataset.tab === tabName;
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-selected', String(active));
+    button.tabIndex = active ? 0 : -1;
+    const content = document.getElementById(button.getAttribute('aria-controls'));
+    content.classList.toggle('active', active);
+    content.hidden = !active;
   });
+}
 
-  // クリックされたタブボタンにactiveを追加
-  const activeButton = document.querySelector(`.tab-button[data-tab="${tabName}"]`);
-  if (activeButton) {
-    activeButton.classList.add('active');
-  }
-
-  // すべてのタブコンテンツを非表示
-  const tabContents = document.querySelectorAll('.tab-content');
-  tabContents.forEach(content => {
-    content.classList.remove('active');
-  });
-
-  // 選択されたタブコンテンツを表示
-  const activeContent = document.getElementById(`${tabName}-tab`);
-  if (activeContent) {
-    activeContent.classList.add('active');
-  }
+function handleTabKeydown(event) {
+  const tabs = [...document.querySelectorAll('.tab-button')];
+  const index = tabs.indexOf(event.currentTarget);
+  const targets = { ArrowLeft: (index + tabs.length - 1) % tabs.length, ArrowRight: (index + 1) % tabs.length,
+    Home: 0, End: tabs.length - 1 };
+  if (!Object.prototype.hasOwnProperty.call(targets, event.key)) return;
+  event.preventDefault();
+  const next = tabs[targets[event.key]];
+  switchTab(next.dataset.tab);
+  next.focus();
 }
 
 // ページ読み込み時の初期化
@@ -311,10 +292,17 @@ document.addEventListener('DOMContentLoaded', function() {
   initTheme();
   setupRealTimeConversion();
 
-  // モード選択の変更時にハイライトを制御
-  const modeSelect = document.getElementById('mode');
-  modeSelect.addEventListener('change', function() {
-    handleModeChange();
-    processText(); // モード変更時も変換を実行
+  // インラインハンドラーを使わず操作を登録する
+  document.getElementById('mode').addEventListener('change', handleModeChange);
+  document.getElementById('convertButton').addEventListener('click', processText);
+  document.getElementById('copyButton').addEventListener('click', copyToClipboard);
+  document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+  document.getElementById('helpButton').addEventListener('click', openHelpModal);
+  document.getElementById('helpModal').addEventListener('click', closeHelpModal);
+  document.querySelector('.modal-close').addEventListener('click', () => closeHelpModal());
+  document.addEventListener('keydown', handleModalKeydown);
+  document.querySelectorAll('.tab-button').forEach(button => {
+    button.addEventListener('click', () => switchTab(button.dataset.tab));
+    button.addEventListener('keydown', handleTabKeydown);
   });
 });

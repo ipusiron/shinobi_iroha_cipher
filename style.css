@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic&display=swap');
-
 /* CSS変数でテーマカラーを定義 */
 :root {
   /* ライトモードの色定義 */
@@ -20,7 +18,11 @@
   
   --text-primary: #1f2937;
   --text-secondary: #4b5563;
-  --text-accent: #d97706;
+  --text-accent: #b45309;
+  --accent-surface: #c2620a;
+  --text-on-accent: #111111;
+  --success-surface: #047857;
+  --text-on-success: #ffffff;
   --text-link: #2563eb;
   --text-table-header: #ffffff;
   --text-table-last: #ffffff;
@@ -58,6 +60,10 @@
   --text-primary: #e0e0e0;
   --text-secondary: #9ca3af;
   --text-accent: #facc15;
+  --accent-surface: #facc15;
+  --text-on-accent: #111111;
+  --success-surface: #047857;
+  --text-on-success: #ffffff;
   --text-link: #60a5fa;
   --text-table-header: #facc15;
   --text-table-last: #facc15;
@@ -76,7 +82,7 @@
 }
 
 body {
-  font-family: 'Zen Maru Gothic', sans-serif;
+  font-family: system-ui, -apple-system, "Segoe UI", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Noto Sans JP", Meiryo, sans-serif;
   background-color: var(--bg-primary);
   background-image: var(--bg-pattern);
   background-size: 20px 20px;
@@ -119,8 +125,8 @@ h1 {
   cursor: pointer;
   font-size: 1.2rem;
   transition: all 0.3s ease;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2.75rem;
+  height: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -162,7 +168,6 @@ textarea {
 }
 
 textarea:focus {
-  outline: none;
   border-color: var(--text-accent);
 }
 
@@ -222,9 +227,10 @@ button:not(.theme-toggle):not(.tab-button):hover {
   transform: scale(0.95);
 }
 
-.copy-button.copied {
-  background: linear-gradient(to right, #10b981, #059669);
-  color: white;
+button.copy-button.copied,
+button.copy-button.copied:hover {
+  background: var(--success-surface);
+  color: var(--text-on-success);
 }
 
 .copy-icon {
@@ -286,8 +292,8 @@ select {
 }
 
 .tab-button.active {
-  background: var(--text-accent);
-  color: #fff;
+  background: var(--accent-surface);
+  color: var(--text-on-accent);
   font-weight: bold;
 }
 
@@ -352,7 +358,7 @@ select {
   border: 1px solid var(--border-secondary);
 }
 
-.conversion-rules h3 {
+.conversion-rules h2 {
   margin: 0 0 0.75rem 0;
   color: var(--text-accent);
   font-size: 1.1rem;
@@ -409,10 +415,10 @@ td {
 }
 
 td.highlighted {
-  background-color: var(--text-accent) !important;
-  color: white !important;
+  background-color: var(--accent-surface) !important;
+  color: var(--text-on-accent) !important;
   transform: scale(1.1);
-  box-shadow: 0 0 10px rgba(250, 204, 21, 0.5);
+  box-shadow: 0 0 10px var(--accent-surface);
   z-index: 10;
   font-weight: bold;
 }
@@ -485,7 +491,7 @@ footer a:hover {
   border: 2px solid var(--border-primary);
   box-shadow: 0 10px 30px var(--shadow-primary);
   max-width: 600px;
-  max-height: 80vh;
+  max-height: 80dvh;
   width: 100%;
   overflow: hidden;
   animation: slideIn 0.3s ease;
@@ -532,7 +538,7 @@ footer a:hover {
 
 .modal-body {
   padding: 2rem;
-  max-height: 60vh;
+  max-height: 60dvh;
   overflow-y: auto;
   color: var(--text-primary);
 }
@@ -663,7 +669,7 @@ footer a:hover {
 
   .modal-content {
     margin: 0.5rem;
-    max-height: 90vh;
+    max-height: 90dvh;
   }
 
   .modal-header {
@@ -676,6 +682,74 @@ footer a:hover {
 
   .modal-body {
     padding: 1.5rem;
-    max-height: 70vh;
+    max-height: 70dvh;
+  }
+}
+
+/* キーボード操作・CSP対応 */
+[hidden] {
+  display: none !important;
+}
+
+:focus-visible {
+  outline: 3px solid var(--text-accent);
+  outline-offset: 2px;
+}
+
+body.modal-open {
+  overflow: hidden;
+}
+
+.modal {
+  box-sizing: border-box;
+}
+
+.theme-icon.spin {
+  transform: rotate(360deg);
+}
+
+.clipboard-fallback {
+  position: fixed;
+  left: -9999px;
+  top: 0;
+}
+
+button,
+.copy-button,
+.modal-close {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.input-label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+#resultMessage {
+  margin-top: 0.75rem;
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+
+#resultMessage:empty {
+  margin-top: 0;
+}
+
+footer {
+  overflow-wrap: anywhere;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .theme-icon.spin {
+    transform: none;
   }
 }
