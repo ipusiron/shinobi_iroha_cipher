@@ -1,0 +1,7 @@
+{
+  "name": "shinobi_iroha_cipher",
+  "private": true,
+  "scripts": {
+    "test": "node --test"
+  }
+}

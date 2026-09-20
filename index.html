@@ -3,40 +3,48 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="description" content="『万川集海』の忍びいろは暗号を体験するツールです。清音に直したかなを偏と旁の組み合わせで暗号化・復号できます。">
+  <link rel="icon" href="favicon.svg">
   <title>忍びいろはの暗号ツール（Shinobi Iroha Cipher Tool）</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <noscript>このツールを使うには、ブラウザーのJavaScriptを有効にしてください。</noscript>
   <div class="container">
     <div class="header">
       <h1>忍びいろはの暗号ツール<br>（Shinobi Iroha Cipher Tool）</h1>
       <div class="header-buttons">
-        <button id="helpButton" class="help-button" onclick="openHelpModal()" title="使い方・説明">
+        <button id="helpButton" class="help-button" aria-label="使い方・説明" aria-haspopup="dialog" title="使い方・説明">
           <span class="help-icon">❓</span>
         </button>
-        <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()" title="テーマ切り替え">
+        <button id="themeToggle" class="theme-toggle" aria-label="ダークモードに切り替える" aria-pressed="false" title="テーマ切り替え">
           <span class="theme-icon">🌙</span>
         </button>
       </div>
     </div>
 
     <!-- タブナビゲーション -->
-    <div class="tab-navigation">
-      <button class="tab-button active" data-tab="cipher" onclick="switchTab('cipher')">暗号化・復号</button>
-      <button class="tab-button" data-tab="table" onclick="switchTab('table')">置換表</button>
+    <div class="tab-navigation" role="tablist" aria-label="表示する内容">
+      <button id="cipher-tab-button" class="tab-button active" data-tab="cipher"
+        role="tab" aria-selected="true" aria-controls="cipher-tab" tabindex="0">暗号化・復号</button>
+      <button id="table-tab-button" class="tab-button" data-tab="table"
+        role="tab" aria-selected="false" aria-controls="table-tab" tabindex="-1">置換表</button>
     </div>
 
     <!-- 暗号化・復号タブ -->
-    <div id="cipher-tab" class="tab-content active">
+    <div id="cipher-tab" class="tab-content active" role="tabpanel" aria-labelledby="cipher-tab-button">
       <label for="mode">モード選択:</label>
       <select id="mode">
         <option value="encrypt">暗号化</option>
         <option value="decrypt">復号</option>
       </select>
 
+      <label for="inputText" class="input-label">変換するテキスト（10,000文字まで）</label>
       <textarea id="inputText" placeholder="ここにテキストを入力（リアルタイムで変換されます）"></textarea>
       <div>
-        <button onclick="processText()">変換</button>
+        <button id="convertButton">変換</button>
       </div>
 
       <div class="table-container">
@@ -68,23 +76,24 @@
       <div class="output-container">
         <div class="output-header">
           <span class="output-label">変換結果:</span>
-          <button id="copyButton" class="copy-button" onclick="copyToClipboard()" title="結果をコピー">
+          <button id="copyButton" class="copy-button" title="結果をコピー">
             <span class="copy-icon">📋</span>
             <span class="copy-text">コピー</span>
           </button>
         </div>
-        <div class="output" id="outputText"></div>
+        <div class="output" id="outputText" aria-live="polite"></div>
+        <div id="resultMessage" aria-live="polite"></div>
       </div>
     </div>
 
     <!-- 置換表タブ -->
-    <div id="table-tab" class="tab-content">
+    <div id="table-tab" class="tab-content" role="tabpanel" aria-labelledby="table-tab-button" hidden>
       <div class="table-description">
         <p>下の2つの表を見比べることで、平文文字（いろは仮名）と暗号文文字（忍びいろは）の対応関係がわかります。</p>
       </div>
 
       <div class="table-section">
-        <h3 class="table-title">いろは仮名（平文）</h3>
+        <h2 class="table-title">いろは仮名（平文）</h2>
         <p class="table-subtitle">縦軸（右端）が<strong>偏（へん）</strong>、横軸（上部）が<strong>旁（つくり）</strong></p>
         <div class="table-container">
           <table>
@@ -114,7 +123,7 @@
       </div>
 
       <div class="table-section">
-        <h3 class="table-title">忍びいろは（暗号文）</h3>
+        <h2 class="table-title">忍びいろは（暗号文）</h2>
         <p class="table-subtitle">同じ位置にある文字同士が対応します</p>
         <div class="shinobi-image-container">
           <img src="assets/substitution_table.png" alt="忍びいろはの構成表" class="shinobi-table-image">
@@ -122,15 +131,20 @@
       </div>
 
       <div class="conversion-rules">
-        <h3>自動清音変換ルール</h3>
-        <p>忍びいろは暗号表にない文字は、以下のルールで自動的に清音に変換されます：</p>
+        <h2>自動清音変換ルール</h2>
+        <p>忍びいろは暗号表にない文字は、以下のルールで自動的に清音に変換されます。</p>
         <ul>
           <li><strong>濁点：</strong> が→か、ざ→さ、だ→た、ば→は</li>
           <li><strong>半濁点：</strong> ぱ→は、ぴ→ひ、ぷ→ふ、ぺ→へ、ぽ→ほ</li>
           <li><strong>促音：</strong> っ→つ</li>
           <li><strong>長音：</strong> ー→削除</li>
           <li><strong>小文字：</strong> ゃ→や、ゅ→ゆ、ょ→よ、ぁ→あ など</li>
+          <li><strong>カタカナ：</strong>平仮名に直してから清音化</li>
+          <li><strong>NFKC正規化：</strong>半角カタカナ・分解された濁点を統一</li>
+          <li><strong>追加の清音化：</strong>ゔ→う、ゕ→か、ゖ→け</li>
+          <li><strong>表にない文字：</strong>英数字・漢字・記号を除き、除いた文字を画面に表示</li>
         </ul>
+        <p>復号できないかたまりは?になり、画面に知らせます。復号モードでもカーソル位置のかたまりに対応するセルが光ります。</p>
       </div>
     </div>
   </div>
@@ -138,16 +152,16 @@
   <!-- フッター -->
   <footer class="app-footer">
     <div class="footer">
-      🔗 GitHubリポジトリはこちら（<a href="https://github.com/ipusiron/shinobi_iroha_cipher" target="_blank">ipusiron/shinobi_iroha_cipher</a>）
+      🔗 GitHubリポジトリはこちら（<a href="https://github.com/ipusiron/shinobi_iroha_cipher" target="_blank" rel="noopener noreferrer">ipusiron/shinobi_iroha_cipher</a>）
     </div>
   </footer>
 
   <!-- ヘルプモーダル -->
-  <div id="helpModal" class="modal" onclick="closeHelpModal(event)">
-    <div class="modal-content" onclick="event.stopPropagation()">
+  <div id="helpModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="helpTitle" hidden>
+    <div class="modal-content">
       <div class="modal-header">
-        <h2>忍びいろは暗号について</h2>
-        <button class="modal-close" onclick="closeHelpModal()">&times;</button>
+        <h2 id="helpTitle">忍びいろは暗号について</h2>
+        <button class="modal-close" aria-label="閉じる">&times;</button>
       </div>
       <div class="modal-body">
         <section class="help-section">
@@ -158,7 +172,7 @@
         <section class="help-section">
           <h3>🎯 使い方</h3>
           <div class="usage-step">
-            <h4>暗号化の場合：</h4>
+            <h4>暗号化の場合</h4>
             <ol>
               <li>モード選択で「暗号化」を選択</li>
               <li>テキスト入力欄にひらがなを入力（例：「てき」）</li>
@@ -173,30 +187,35 @@
           </div>
 
           <div class="usage-step">
-            <h4>復号の場合：</h4>
+            <h4>復号の場合</h4>
             <ol>
               <li>モード選択で「復号」を選択</li>
-              <li>暗号文を入力（例：「身白 土黒」）</li>
+              <li>暗号文を半角・全角スペースまたは改行で区切って入力（例：「身白 土黒」）</li>
               <li>「変換」ボタンをクリック</li>
               <li>結果：「てき」のように表示されます</li>
             </ol>
+            <p>復号できないかたまりは?になり、画面に通知します。カーソル位置のかたまりに対応する表のセルが光ります。</p>
           </div>
 
           <div class="usage-step">
-            <h4>文字変換の詳細：</h4>
+            <h4>文字変換の詳細</h4>
             <ul>
               <li><strong>濁点：</strong> が→か、ざ→さ、だ→た、ば→は</li>
               <li><strong>半濁点：</strong> ぱ→は、ぴ→ひ、ぷ→ふ、ぺ→へ、ぽ→ほ</li>
               <li><strong>促音：</strong> っ→つ</li>
               <li><strong>長音：</strong> ー→削除</li>
               <li><strong>小文字：</strong> ゃ→や、ゅ→ゆ、ょ→よ、ぁ→あ など</li>
+              <li><strong>カタカナ：</strong>平仮名に直してから清音化</li>
+              <li><strong>NFKC正規化：</strong>半角カタカナ・分解された濁点を統一</li>
+              <li><strong>追加の清音化：</strong>ゔ→う、ゕ→か、ゖ→け</li>
+              <li><strong>表にない文字：</strong>英数字・漢字・記号を除き、除いた文字を画面に表示</li>
             </ul>
           </div>
         </section>
 
         <section class="help-section">
           <h3>📊 変換表の見方</h3>
-          <p>テーブルは以下のように読みます：</p>
+          <p>テーブルは以下のように読みます。</p>
           <ul>
             <li><strong>縦軸（右端）</strong>：偏（木、火、土、金、水、人、身）</li>
             <li><strong>横軸（上部）</strong>：旁（紫、黒、白、赤、黄、青、色）</li>
@@ -228,6 +247,7 @@
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script src="shinobi-logic.js" defer></script>
+  <script src="script.js" defer></script>
 </body>
 </html>
