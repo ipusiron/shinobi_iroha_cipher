@@ -4,6 +4,18 @@ let copyFeedbackTimer;
 let themeAnimationTimer;
 let helpReturnFocus;
 
+// 画面に出ている通知は {key, values} で覚える。文字列で持つと言語を変えたときに戻せない
+let resultNotices = [];
+let copyNotice = null;
+
+// コピーボタンの状態。文言は毎回 t() から組み立て、定数で書き戻さない
+const COPY_STATES = {
+  idle: { icon: '📋', key: 'copy.label' },
+  copied: { icon: '✅', key: 'copy.done' },
+  failed: { icon: '❌', key: 'copy.failed' },
+  empty: { icon: '❌', key: 'copy.empty' }
+};
+
 // ヘルプモーダル関連
 function openHelpModal() {
   const modal = document.getElementById('helpModal');
@@ -21,7 +33,7 @@ function closeHelpModal(event) {
   if (event && event.target !== event.currentTarget) {
     return;
   }
-  
+
   const modal = document.getElementById('helpModal');
   if (modal.hidden) return;
   modal.classList.remove('show');
@@ -62,50 +74,51 @@ function initTheme() {
   } catch {
     // 保存領域が使えなくても変換は続ける
   }
-  const body = document.body;
-  const themeIcon = document.querySelector('.theme-icon');
-  
-  body.setAttribute('data-theme', savedTheme);
-  updateThemeIcon(savedTheme, themeIcon);
+  document.body.setAttribute('data-theme', savedTheme);
+  renderThemeToggle();
+  spinThemeIcon();
 }
 
 function toggleTheme() {
   const body = document.body;
   const currentTheme = body.getAttribute('data-theme') || 'light';
   const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-  const themeIcon = document.querySelector('.theme-icon');
-  
+
   body.setAttribute('data-theme', newTheme);
   try {
     localStorage.setItem('theme', newTheme);
   } catch {
     // テーマはこのページを開いている間だけ適用する
   }
-  updateThemeIcon(newTheme, themeIcon);
+  renderThemeToggle();
+  spinThemeIcon();
 }
 
-function updateThemeIcon(theme, iconElement) {
+// 読み上げの文言は状態から組み立てる。data-i18n-aria-label だと切り替えで巻き戻る
+function renderThemeToggle() {
+  const theme = document.body.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
   const toggle = document.getElementById('themeToggle');
   toggle.setAttribute('aria-pressed', String(theme === 'dark'));
-  toggle.setAttribute('aria-label', theme === 'dark' ? 'ライトモードに切り替える' : 'ダークモードに切り替える');
-  if (iconElement) {
-    iconElement.textContent = theme === 'light' ? '🌙' : '☀️';
-    clearTimeout(themeAnimationTimer);
-    iconElement.classList.add('spin');
-    themeAnimationTimer = setTimeout(() => iconElement.classList.remove('spin'), 300);
-  }
+  toggle.setAttribute('aria-label', I18n.t(theme === 'dark' ? 'theme.toLight' : 'theme.toDark'));
+  const iconElement = document.querySelector('.theme-icon');
+  if (iconElement) iconElement.textContent = theme === 'light' ? '🌙' : '☀️';
+}
+
+function spinThemeIcon() {
+  const iconElement = document.querySelector('.theme-icon');
+  if (!iconElement) return;
+  clearTimeout(themeAnimationTimer);
+  iconElement.classList.add('spin');
+  themeAnimationTimer = setTimeout(() => iconElement.classList.remove('spin'), 300);
 }
 
 // クリップボードコピー機能
 async function copyToClipboard() {
   const outputText = document.getElementById('outputText').textContent;
-  const copyButton = document.getElementById('copyButton');
-  const copyIcon = copyButton.querySelector('.copy-icon');
-  const copyText = copyButton.querySelector('.copy-text');
-  
+
   if (!outputText.trim()) {
     // 結果が空の場合
-    showCopyFeedback(copyButton, copyIcon, copyText, '空です', '❌', false);
+    setCopyState('empty', 'msg.copyFailed');
     return;
   }
 
@@ -113,19 +126,19 @@ async function copyToClipboard() {
     // 現代のブラウザーでのコピー
     if (navigator.clipboard?.writeText && window.isSecureContext) {
       await navigator.clipboard.writeText(outputText);
-      showCopyFeedback(copyButton, copyIcon, copyText, 'コピー完了', '✅', true);
+      setCopyState('copied', 'msg.copied');
     } else {
       // フォールバック: 古いブラウザー対応
-      fallbackCopyTextToClipboard(outputText, copyButton, copyIcon, copyText);
+      fallbackCopyTextToClipboard(outputText);
     }
   } catch (err) {
     // 失敗の詳細や入力内容はコンソールへ出さない
-    showCopyFeedback(copyButton, copyIcon, copyText, 'コピー失敗', '❌', false);
+    setCopyState('failed', 'msg.copyFailed');
   }
 }
 
 // 古いブラウザー用のフォールバック
-function fallbackCopyTextToClipboard(text, button, icon, textElement) {
+function fallbackCopyTextToClipboard(text) {
   const textArea = document.createElement('textarea');
   textArea.value = text;
   textArea.classList.add('clipboard-fallback');
@@ -133,55 +146,62 @@ function fallbackCopyTextToClipboard(text, button, icon, textElement) {
   document.body.appendChild(textArea);
   textArea.focus();
   textArea.select();
-  
+
   try {
     const successful = document.execCommand('copy');
-    if (successful) {
-      showCopyFeedback(button, icon, textElement, 'コピー完了', '✅', true);
-    } else {
-      showCopyFeedback(button, icon, textElement, 'コピー失敗', '❌', false);
-    }
+    setCopyState(successful ? 'copied' : 'failed', successful ? 'msg.copied' : 'msg.copyFailed');
   } catch (err) {
     // 古いブラウザーでの失敗も画面で知らせる
-    showCopyFeedback(button, icon, textElement, 'コピー失敗', '❌', false);
+    setCopyState('failed', 'msg.copyFailed');
   }
-  
+
   document.body.removeChild(textArea);
   previousFocus?.focus();
 }
 
-// コピー成功/失敗の視覚的フィードバック
-function showCopyFeedback(button, icon, textElement, message, emoji, success) {
+// コピー成功/失敗の視覚的フィードバック。状態だけを持ち、文言はその都度訳す
+function setCopyState(state, noticeKey) {
   clearTimeout(copyFeedbackTimer);
-  document.getElementById('resultMessage').textContent = success
-    ? 'コピーしました'
-    : 'コピーできませんでした。結果を選択してコピーしてください';
-  
-  // アイコンとテキストを変更
-  icon.textContent = emoji;
-  textElement.textContent = message;
-  
-  // 成功時はボタンの色を変更
-  button.classList.toggle('copied', success);
-  
+  const button = document.getElementById('copyButton');
+  button.dataset.state = Object.hasOwn(COPY_STATES, state) ? state : 'idle';
+  copyNotice = noticeKey ? { key: noticeKey, values: {} } : null;
+  renderCopyButton();
+  renderNotices();
+
   // 1.5秒後に元に戻す
-  copyFeedbackTimer = setTimeout(() => {
-    icon.textContent = '📋';
-    textElement.textContent = 'コピー';
-    button.classList.remove('copied');
-  }, 1500);
+  if (button.dataset.state !== 'idle') {
+    copyFeedbackTimer = setTimeout(() => {
+      button.dataset.state = 'idle';
+      renderCopyButton();
+    }, 1500);
+  }
+}
+
+function renderCopyButton() {
+  const button = document.getElementById('copyButton');
+  const state = Object.hasOwn(COPY_STATES, button.dataset.state) ? button.dataset.state : 'idle';
+  button.querySelector('.copy-icon').textContent = COPY_STATES[state].icon;
+  button.querySelector('.copy-text').textContent = I18n.t(COPY_STATES[state].key);
+  button.classList.toggle('copied', state === 'copied');
+}
+
+// 通知は覚えたキーから毎回組み立てる。切り替えても消えず、訳し直される
+function renderNotices() {
+  const notices = copyNotice ? [copyNotice] : resultNotices;
+  document.getElementById('resultMessage').textContent =
+    notices.map(notice => I18n.t(notice.key, notice.values)).join(I18n.t('msg.separator'));
 }
 
 // リアルタイム変換とハイライト機能
 function setupRealTimeConversion() {
   const inputTextArea = document.getElementById('inputText');
-  
+
   // inputイベントでリアルタイム変換
   inputTextArea.addEventListener('input', function() {
     processText();
     highlightCurrentCharacter();
   });
-  
+
   // カーソル移動時のハイライト更新
   inputTextArea.addEventListener('keyup', highlightCurrentCharacter);
   inputTextArea.addEventListener('click', highlightCurrentCharacter);
@@ -192,10 +212,10 @@ function highlightCurrentCharacter() {
   const inputTextArea = document.getElementById('inputText');
   const cursorPosition = inputTextArea.selectionStart;
   const mode = document.getElementById('mode').value;
-  
+
   // 前のハイライトを削除
   clearHighlights();
-  
+
   const input = [...inputTextArea.value].slice(0, 10000).join('');
   if (cursorPosition > input.length) return;
   const kana = mode === 'encrypt'
@@ -232,31 +252,34 @@ function processText() {
   const input = chars.slice(0, 10000).join('');
   const mode = document.getElementById('mode').value;
   const outputDiv = document.getElementById('outputText');
-  const messages = [];
-  if (chars.length > 10000) messages.push('入力は10,000文字までです。先頭10,000文字だけ変換しました。');
+  const notices = [];
+  if (chars.length > 10000) notices.push({ key: 'msg.tooLong', values: {} });
 
   if (mode === 'encrypt') {
     const result = ShinobiLogic.encrypt(input);
     outputDiv.textContent = result.cipher;
     if (result.seion !== input.normalize('NFKC')) {
       const short = value => [...value].slice(0, 80).join('').replace(/\s+/gu, ' ') + ([...value].length > 80 ? '…' : '');
-      messages.push('清音に直してから変換しました：' + short(input) + ' → ' + short(result.seion));
+      notices.push({ key: 'msg.seion', values: { from: short(input), to: short(result.seion) } });
     }
     if (result.skipped.length) {
       const shown = result.skipped.slice(0, 10).join(' ');
-      const more = result.skipped.length > 10 ? ' ほか' : '';
-      messages.push('変換できない文字を除きました：' + shown + more + '（' + result.skipped.length + '文字）');
+      // 「ほか」は言語で形が変わるので、連結せずキーを分ける
+      notices.push({ key: result.skipped.length > 10 ? 'msg.skippedMore' : 'msg.skipped',
+        values: { chars: shown, count: result.skipped.length } });
     }
   } else {
     const result = ShinobiLogic.decrypt(input);
     outputDiv.textContent = result.plain;
     if (result.unknown.length) {
       const shown = result.unknown.slice(0, 10).map(token => [...token].slice(0, 80).join('')).join(' ');
-      const more = result.unknown.length > 10 ? ' ほか' : '';
-      messages.push('復号できないかたまりがあります：' + shown + more + '（' + result.unknown.length + '個）');
+      notices.push({ key: result.unknown.length > 10 ? 'msg.unknownMore' : 'msg.unknown',
+        values: { tokens: shown, count: result.unknown.length } });
     }
   }
-  document.getElementById('resultMessage').textContent = messages.join('／');
+  resultNotices = notices;
+  copyNotice = null;
+  renderNotices();
   highlightCurrentCharacter();
 }
 
@@ -287,9 +310,18 @@ function handleTabKeydown(event) {
   next.focus();
 }
 
+// 言語を変えたら、状態から作っている表示をすべて組み直す
+function retranslate() {
+  renderThemeToggle();
+  renderCopyButton();
+  renderNotices();
+}
+
 // ページ読み込み時の初期化
 document.addEventListener('DOMContentLoaded', function() {
+  I18n.init();
   initTheme();
+  renderCopyButton();
   setupRealTimeConversion();
 
   // インラインハンドラーを使わず操作を登録する
@@ -297,10 +329,12 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('convertButton').addEventListener('click', processText);
   document.getElementById('copyButton').addEventListener('click', copyToClipboard);
   document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+  document.getElementById('langToggle').addEventListener('click', () => I18n.toggle());
   document.getElementById('helpButton').addEventListener('click', openHelpModal);
   document.getElementById('helpModal').addEventListener('click', closeHelpModal);
   document.querySelector('.modal-close').addEventListener('click', () => closeHelpModal());
   document.addEventListener('keydown', handleModalKeydown);
+  document.addEventListener('languagechange', retranslate);
   document.querySelectorAll('.tab-button').forEach(button => {
     button.addEventListener('click', () => switchTab(button.dataset.tab));
     button.addEventListener('keydown', handleTabKeydown);

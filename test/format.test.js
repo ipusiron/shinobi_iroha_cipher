@@ -5,9 +5,10 @@ const fs = require('node:fs');
 const path = require('node:path');
 const root = path.join(__dirname, '..');
 test('整形済みファイルの最長行と行数', () => {
-  const files = ['script.js', 'shinobi-logic.js', 'style.css', 'index.html',
+  const files = ['script.js', 'shinobi-logic.js', 'i18n.js', 'style.css', 'index.html',
     ...fs.readdirSync(__dirname).filter(f => f.endsWith('.js')).map(f => 'test/' + f)];
-  const minimum = { 'style.css': 600, 'index.html': 200, 'script.js': 150, 'shinobi-logic.js': 80 };
+  const minimum = { 'style.css': 600, 'index.html': 200, 'script.js': 150, 'shinobi-logic.js': 80,
+    'i18n.js': 300 };
   for (const file of files) {
     const lines = fs.readFileSync(path.join(root, file), 'utf8').split(/\r?\n/);
     const limit = file === 'index.html' ? 250 : 160;

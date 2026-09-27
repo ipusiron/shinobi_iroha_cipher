@@ -35,6 +35,8 @@ hub: true
 
 # 忍びいろはの暗号ツール（Shinobi Iroha Cipher Tool）
 
+[English](README.en.md) · 日本語
+
 ![GitHub Repo stars](https://img.shields.io/github/stars/ipusiron/shinobi_iroha_cipher?style=social)
 ![GitHub forks](https://img.shields.io/github/forks/ipusiron/shinobi_iroha_cipher?style=social)
 ![GitHub last commit](https://img.shields.io/github/last-commit/ipusiron/shinobi_iroha_cipher)
@@ -86,6 +88,7 @@ hub: true
 ### UI/UX機能
 - **🗂️ タブ切り替え**：「暗号化・復号」タブと「置換表」タブで機能を整理
 - **🌙/☀️ テーマ切り替え**：ダークモード・ライトモードの切り替え（設定自動保存）
+- **🌐 日英切り替え**：画面の文言を日本語と英語で切り替え（選択自動保存、`?lang=en`でも指定可）
 - **📱 レスポンシブデザイン**：スマートフォン・タブレットに完全対応
 - **✨ アニメーション効果**：スムーズなトランジションとホバーエフェクト
 
@@ -181,6 +184,14 @@ hub: true
 2つの表により、「いろは仮名⇔忍びいろは」の対応関係ができあがります。
 この対応こそが、当該暗号の置換表（暗号表）そのものです。
 
+#### 見出しの漢字を英語に置き換えない理由
+
+英語表示でも、列の「紫・黒・白・赤・黄・青・色」と右端の「木・火・土・金・水・人・身」は漢字のままにしています。
+これらは暗号文に現れる文字そのもので、「てき」の暗号文「身白 土黒」を引くための索引だからです。
+`白`を`White`に置き換えると、表が自分の出力を説明できなくなります。
+実測でも、列幅が38pxから72pxへ広がり、390px幅では表が枠に収まらなくなります（表全体で302px→516px）。
+英語の読みは表の下の凡例とヘルプで添えています。
+
 ---
 
 ## ⚠️ 注意
@@ -201,6 +212,7 @@ hub: true
 「暗号化・復号」タブには入力、変換ボタン、ハイライト付きの表、結果と通知があります。
 「置換表」タブには2つの表と清音変換の説明があります。
 タブは左右矢印・Home・Endでも移動でき、ヘルプはEscapeで閉じられます。
+ヘッダーの`EN`ボタンで日本語と英語を切り替えられます。入力や結果、出ている通知はそのまま残ります。
 
 ### 技術的特徴
 
@@ -334,7 +346,9 @@ Google Fontsへの通信をなくすため、システムフォントに変更�
 ページ表示と変換操作で外部リソースへのリクエストは発生せず、入力は端末の外に出ません。
 meta CSPでスクリプトとスタイルを同一配信元に限定し、インライン実行と外部通信を禁止しています。
 referrerはno-referrerとし、描画にはtextContentを使います。
-localStorageに保存するのはthemeだけです。保存値がlight・dark以外の場合や保存領域が使えない場合はライトで開きます。
+localStorageに保存するのはtheme（配色）と言語の選択だけです。
+保存値がlight・dark以外の場合や保存領域が使えない場合はライトで開きます。
+言語も同様で、保存値が不正な場合や保存領域が使えない場合は`?lang=`とブラウザーの設定から決めます。
 外部リンクを押したときはリンク先への通信が発生します。
 
 ## ❓ FAQ
@@ -353,6 +367,7 @@ localStorageに保存するのはthemeだけです。保存値がlight・dark以
 Node 22以上で`npm test`を実行します。依存パッケージもネットワーク接続も不要です。
 GitHub Actionsがpushとpull_requestのたびに実行します。
 暗号化・復号・カーソル位置・48文字の往復に加え、READMEの表と例・頻度・画像参照、HTML、配色も検証します。
+日英の辞書についても、キーの一致・差し込みの整合・訳し忘れ・置換表の見出しを訳していないことを`test/i18n.test.js`で検証します。
 
 ## 🔗 参考
 
@@ -366,6 +381,7 @@ shinobi_iroha_cipher/
 ├── index.html              # 2つのタブとヘルプ
 ├── style.css               # 配色・レスポンシブ・フォーカス表示
 ├── script.js               # DOM操作と入力の上限管理
+├── i18n.js                 # 日英の辞書と切り替え（言語の保存もここ）
 ├── shinobi-logic.js         # 清音化・暗号化・復号・カーソル位置
 ├── favicon.svg             # ローカルのアイコン
 ├── assets/                 # 構成表と画面写真（旧画像も保持）
@@ -376,6 +392,7 @@ shinobi_iroha_cipher/
 ├── .gitignore              # Gitの除外設定
 ├── CLAUDE.md               # 開発時の規則
 ├── README.md               # このファイル
+├── README.en.md            # 英語版のREADME
 └── LICENSE                 # MITライセンス
 ```
 
