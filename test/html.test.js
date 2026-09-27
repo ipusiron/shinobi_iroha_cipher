@@ -22,7 +22,7 @@ test('head・CSP・通信なし・古典スクリプトの順序', () => {
   assert.doesNotMatch(csp, /frame-ancestors|unsafe-inline|unsafe-eval/);
   assert.doesNotMatch(html, /\son\w+\s*=|\sstyle\s*=|<style\b|type="module"/i);
   assert.deepEqual([...html.matchAll(/<script([^>]*)>/g)].map(m => m[1]),
-    [' src="shinobi-logic.js" defer', ' src="script.js" defer']);
+    [' src="i18n.js" defer', ' src="shinobi-logic.js" defer', ' src="script.js" defer']);
   assert.doesNotMatch(html, /<(?:script|link|img)\b[^>]*(?:src|href)="https?:/i);
   assert.doesNotMatch(css, /@import|http/);
 });
@@ -57,7 +57,7 @@ test('DOM非依存・禁止処理なし・npmとCIの固定契約', () => {
   const logic = read('shinobi-logic.js');
   const script = read('script.js');
   assert.doesNotMatch(logic, /document|window|localStorage/);
-  for (const code of [logic, script]) {
+  for (const code of [logic, script, read('i18n.js')]) {
     assert.doesNotMatch(code, /innerHTML|insertAdjacentHTML|document\.write|console\.log|Math\.random|eval/);
   }
   assert.doesNotMatch(script, /\.style\./);

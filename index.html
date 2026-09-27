@@ -11,40 +11,48 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <noscript>このツールを使うには、ブラウザーのJavaScriptを有効にしてください。</noscript>
+  <noscript>このツールを使うには、ブラウザーのJavaScriptを有効にしてください。 / This tool needs JavaScript. Please turn it on in your browser.</noscript>
   <div class="container">
     <div class="header">
-      <h1>忍びいろはの暗号ツール<br>（Shinobi Iroha Cipher Tool）</h1>
+      <h1><span data-i18n="app.headingMain">忍びいろはの暗号ツール</span><br><span
+        data-i18n="app.headingSub">（Shinobi Iroha Cipher Tool）</span></h1>
       <div class="header-buttons">
-        <button id="helpButton" class="help-button" aria-label="使い方・説明" aria-haspopup="dialog" title="使い方・説明">
+        <button id="langToggle" class="lang-toggle" type="button"
+          data-i18n="app.langButton" data-i18n-aria-label="app.langAria"
+          data-i18n-title="app.langTitle" aria-label="言語を切り替える" title="日本語と英語を切り替える">EN</button>
+        <button id="helpButton" class="help-button" data-i18n-aria-label="app.helpAria"
+          data-i18n-title="app.helpAria" aria-label="使い方・説明" aria-haspopup="dialog" title="使い方・説明">
           <span class="help-icon">❓</span>
         </button>
-        <button id="themeToggle" class="theme-toggle" aria-label="ダークモードに切り替える" aria-pressed="false" title="テーマ切り替え">
+        <button id="themeToggle" class="theme-toggle" data-i18n-title="app.themeTitle"
+          aria-label="ダークモードに切り替える" aria-pressed="false" title="テーマ切り替え">
           <span class="theme-icon">🌙</span>
         </button>
       </div>
     </div>
 
     <!-- タブナビゲーション -->
-    <div class="tab-navigation" role="tablist" aria-label="表示する内容">
-      <button id="cipher-tab-button" class="tab-button active" data-tab="cipher"
+    <div class="tab-navigation" role="tablist" data-i18n-aria-label="tabs.aria" aria-label="表示する内容">
+      <button id="cipher-tab-button" class="tab-button active" data-tab="cipher" data-i18n="tab.cipher"
         role="tab" aria-selected="true" aria-controls="cipher-tab" tabindex="0">暗号化・復号</button>
-      <button id="table-tab-button" class="tab-button" data-tab="table"
+      <button id="table-tab-button" class="tab-button" data-tab="table" data-i18n="tab.table"
         role="tab" aria-selected="false" aria-controls="table-tab" tabindex="-1">置換表</button>
     </div>
 
     <!-- 暗号化・復号タブ -->
     <div id="cipher-tab" class="tab-content active" role="tabpanel" aria-labelledby="cipher-tab-button">
-      <label for="mode">モード選択:</label>
+      <label for="mode" data-i18n="cipher.modeLabel">モード選択:</label>
       <select id="mode">
-        <option value="encrypt">暗号化</option>
-        <option value="decrypt">復号</option>
+        <option value="encrypt" data-i18n="mode.encrypt">暗号化</option>
+        <option value="decrypt" data-i18n="mode.decrypt">復号</option>
       </select>
 
-      <label for="inputText" class="input-label">変換するテキスト（10,000文字まで）</label>
-      <textarea id="inputText" placeholder="ここにテキストを入力（リアルタイムで変換されます）"></textarea>
+      <label for="inputText" class="input-label"
+        data-i18n="cipher.inputLabel">変換するテキスト（10,000文字まで）</label>
+      <textarea id="inputText" data-i18n-placeholder="cipher.inputPlaceholder"
+        placeholder="ここにテキストを入力（リアルタイムで変換されます）"></textarea>
       <div>
-        <button id="convertButton">変換</button>
+        <button id="convertButton" data-i18n="cipher.convert">変換</button>
       </div>
 
       <div class="table-container">
@@ -72,11 +80,13 @@
           </tbody>
         </table>
       </div>
+      <p class="table-legend" data-i18n="table.legend">列の見出しは旁（つくり）、右端の列は偏（へん）です。</p>
 
       <div class="output-container">
         <div class="output-header">
-          <span class="output-label">変換結果:</span>
-          <button id="copyButton" class="copy-button" title="結果をコピー">
+          <span class="output-label" data-i18n="cipher.outputLabel">変換結果:</span>
+          <button id="copyButton" class="copy-button" data-state="idle"
+            data-i18n-title="copy.title" title="結果をコピー">
             <span class="copy-icon">📋</span>
             <span class="copy-text">コピー</span>
           </button>
@@ -89,12 +99,15 @@
     <!-- 置換表タブ -->
     <div id="table-tab" class="tab-content" role="tabpanel" aria-labelledby="table-tab-button" hidden>
       <div class="table-description">
-        <p>下の2つの表を見比べることで、平文文字（いろは仮名）と暗号文文字（忍びいろは）の対応関係がわかります。</p>
+        <p data-i18n="table.description">下の2つの表を見比べることで、平文文字（いろは仮名）と暗号文文字（忍びいろは）の対応関係がわかります。</p>
       </div>
 
       <div class="table-section">
-        <h2 class="table-title">いろは仮名（平文）</h2>
-        <p class="table-subtitle">縦軸（右端）が<strong>偏（へん）</strong>、横軸（上部）が<strong>旁（つくり）</strong></p>
+        <h2 class="table-title" data-i18n="table.irohaTitle">いろは仮名（平文）</h2>
+        <p class="table-subtitle"><span data-i18n="table.axisRowPrefix">縦軸（右端）が</span><strong
+          data-i18n="table.hen">偏（へん）</strong><span
+          data-i18n="table.axisColPrefix">、横軸（上部）が</span><strong
+          data-i18n="table.tsukuri">旁（つくり）</strong></p>
         <div class="table-container">
           <table>
             <thead>
@@ -120,31 +133,38 @@
             </tbody>
           </table>
         </div>
+        <p class="table-legend" data-i18n="table.legend">列の見出しは旁（つくり）、右端の列は偏（へん）です。</p>
+        <p class="table-legend" data-i18n="table.legendWhy">見出しの漢字は暗号文に現れる文字そのものなので、言語を変えても入れ替えません。</p>
       </div>
 
       <div class="table-section">
-        <h2 class="table-title">忍びいろは（暗号文）</h2>
-        <p class="table-subtitle">同じ位置にある文字同士が対応します</p>
+        <h2 class="table-title" data-i18n="table.shinobiTitle">忍びいろは（暗号文）</h2>
+        <p class="table-subtitle" data-i18n="table.shinobiSubtitle">同じ位置にある文字同士が対応します</p>
         <div class="shinobi-image-container">
-          <img src="assets/substitution_table.png" alt="忍びいろはの構成表" class="shinobi-table-image">
+          <img src="assets/substitution_table.png" data-i18n-alt="table.imageAlt"
+            alt="忍びいろはの構成表" class="shinobi-table-image">
         </div>
       </div>
 
       <div class="conversion-rules">
-        <h2>自動清音変換ルール</h2>
-        <p>忍びいろは暗号表にない文字は、以下のルールで自動的に清音に変換されます。</p>
+        <h2 data-i18n="rules.heading">自動清音変換ルール</h2>
+        <p data-i18n="rules.intro">忍びいろは暗号表にない文字は、以下のルールで自動的に清音に変換されます。</p>
         <ul>
-          <li><strong>濁点：</strong> が→か、ざ→さ、だ→た、ば→は</li>
-          <li><strong>半濁点：</strong> ぱ→は、ぴ→ひ、ぷ→ふ、ぺ→へ、ぽ→ほ</li>
-          <li><strong>促音：</strong> っ→つ</li>
-          <li><strong>長音：</strong> ー→削除</li>
-          <li><strong>小文字：</strong> ゃ→や、ゅ→ゆ、ょ→よ、ぁ→あ など</li>
-          <li><strong>カタカナ：</strong>平仮名に直してから清音化</li>
-          <li><strong>NFKC正規化：</strong>半角カタカナ・分解された濁点を統一</li>
-          <li><strong>追加の清音化：</strong>ゔ→う、ゕ→か、ゖ→け</li>
-          <li><strong>表にない文字：</strong>英数字・漢字・記号を除き、除いた文字を画面に表示</li>
+          <li><strong data-i18n="rules.dakuten">濁点：</strong>が→か、ざ→さ、だ→た、ば→は</li>
+          <li><strong data-i18n="rules.handakuten">半濁点：</strong>ぱ→は、ぴ→ひ、ぷ→ふ、ぺ→へ、ぽ→ほ</li>
+          <li><strong data-i18n="rules.sokuon">促音：</strong>っ→つ</li>
+          <li><strong data-i18n="rules.chouon">長音：</strong><span data-i18n="rules.chouonValue">ー→削除</span></li>
+          <li><strong data-i18n="rules.small">小文字：</strong>ゃ→や、ゅ→ゆ、ょ→よ、ぁ→あ<span
+            data-i18n="rules.etc"> など</span></li>
+          <li><strong data-i18n="rules.katakana">カタカナ：</strong><span
+            data-i18n="rules.katakanaValue">平仮名に直してから清音化</span></li>
+          <li><strong data-i18n="rules.nfkc">NFKC正規化：</strong><span
+            data-i18n="rules.nfkcValue">半角カタカナ・分解された濁点を統一</span></li>
+          <li><strong data-i18n="rules.extraSeion">追加の清音化：</strong>ゔ→う、ゕ→か、ゖ→け</li>
+          <li><strong data-i18n="rules.notInTable">表にない文字：</strong><span
+            data-i18n="rules.notInTableValue">英数字・漢字・記号を除き、除いた文字を画面に表示</span></li>
         </ul>
-        <p>復号できないかたまりは?になり、画面に知らせます。復号モードでもカーソル位置のかたまりに対応するセルが光ります。</p>
+        <p data-i18n="rules.footnote">復号できないかたまりは?になり、画面に知らせます。復号モードでもカーソル位置のかたまりに対応するセルが光ります。</p>
       </div>
     </div>
   </div>
@@ -152,7 +172,9 @@
   <!-- フッター -->
   <footer class="app-footer">
     <div class="footer">
-      🔗 GitHubリポジトリはこちら（<a href="https://github.com/ipusiron/shinobi_iroha_cipher" target="_blank" rel="noopener noreferrer">ipusiron/shinobi_iroha_cipher</a>）
+      <span data-i18n="footer.repoPrefix">🔗 GitHubリポジトリはこちら（</span><a
+        href="https://github.com/ipusiron/shinobi_iroha_cipher" target="_blank"
+        rel="noopener noreferrer">ipusiron/shinobi_iroha_cipher</a><span data-i18n="footer.repoSuffix">）</span>
     </div>
   </footer>
 
@@ -160,93 +182,108 @@
   <div id="helpModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="helpTitle" hidden>
     <div class="modal-content">
       <div class="modal-header">
-        <h2 id="helpTitle">忍びいろは暗号について</h2>
-        <button class="modal-close" aria-label="閉じる">&times;</button>
+        <h2 id="helpTitle" data-i18n="help.title">忍びいろは暗号について</h2>
+        <button class="modal-close" data-i18n-aria-label="help.close" aria-label="閉じる">&times;</button>
       </div>
       <div class="modal-body">
         <section class="help-section">
-          <h3>📚 忍びいろは暗号とは</h3>
-          <p>忍びいろは暗号は、江戸時代の忍術書『万川集海』に記載されている古典暗号です。ひらがなを漢字の「偏（へん）」と「旁（つくり）」の組み合わせで表現することで、文字を隠す技術です。</p>
+          <h3 data-i18n="help.aboutHeading">📚 忍びいろは暗号とは</h3>
+          <p data-i18n="help.aboutBody">忍びいろは暗号は、江戸時代の忍術書『万川集海』に記載されている古典暗号です。ひらがなを漢字の「偏（へん）」と「旁（つくり）」の組み合わせで表現することで、文字を隠す技術です。</p>
         </section>
 
         <section class="help-section">
-          <h3>🎯 使い方</h3>
+          <h3 data-i18n="help.usageHeading">🎯 使い方</h3>
           <div class="usage-step">
-            <h4>暗号化の場合</h4>
+            <h4 data-i18n="help.encryptHeading">暗号化の場合</h4>
             <ol>
-              <li>モード選択で「暗号化」を選択</li>
-              <li>テキスト入力欄にひらがなを入力（例：「てき」）</li>
-              <li>「変換」ボタンをクリック</li>
-              <li>結果：「身白 土黒」のように表示されます</li>
+              <li data-i18n="help.encryptStep1">モード選択で「暗号化」を選択</li>
+              <li data-i18n="help.encryptStep2">テキスト入力欄にひらがなを入力（例：「てき」）</li>
+              <li data-i18n="help.encryptStep3">「変換」ボタンをクリック</li>
+              <li data-i18n="help.encryptStep4">結果：「身白 土黒」のように表示されます</li>
             </ol>
             <div class="note-box">
-              <strong>📝 自動変換機能：</strong><br>
-              濁点・半濁点・促音は自動的に清音に変換されます<br>
-              例：「だいじょうぶ」→「たいしようふ」→「火黄 木色 身黒 木黄 土赤 金白」
+              <strong data-i18n="help.autoLabel">📝 自動変換機能：</strong><br>
+              <span data-i18n="help.autoBody">濁点・半濁点・促音は自動的に清音に変換されます</span><br>
+              <span data-i18n="help.exampleLabel">例：</span>「だいじょうぶ」→「たいしようふ」→「火黄 木色 身黒 木黄 土赤 金白」
             </div>
           </div>
 
           <div class="usage-step">
-            <h4>復号の場合</h4>
+            <h4 data-i18n="help.decryptHeading">復号の場合</h4>
             <ol>
-              <li>モード選択で「復号」を選択</li>
-              <li>暗号文を半角・全角スペースまたは改行で区切って入力（例：「身白 土黒」）</li>
-              <li>「変換」ボタンをクリック</li>
-              <li>結果：「てき」のように表示されます</li>
+              <li data-i18n="help.decryptStep1">モード選択で「復号」を選択</li>
+              <li data-i18n="help.decryptStep2">暗号文を半角・全角スペースまたは改行で区切って入力（例：「身白 土黒」）</li>
+              <li data-i18n="help.decryptStep3">「変換」ボタンをクリック</li>
+              <li data-i18n="help.decryptStep4">結果：「てき」のように表示されます</li>
             </ol>
-            <p>復号できないかたまりは?になり、画面に通知します。カーソル位置のかたまりに対応する表のセルが光ります。</p>
+            <p data-i18n="help.decryptNote">復号できないかたまりは?になり、画面に通知します。カーソル位置のかたまりに対応する表のセルが光ります。</p>
           </div>
 
           <div class="usage-step">
-            <h4>文字変換の詳細</h4>
+            <h4 data-i18n="help.detailHeading">文字変換の詳細</h4>
             <ul>
-              <li><strong>濁点：</strong> が→か、ざ→さ、だ→た、ば→は</li>
-              <li><strong>半濁点：</strong> ぱ→は、ぴ→ひ、ぷ→ふ、ぺ→へ、ぽ→ほ</li>
-              <li><strong>促音：</strong> っ→つ</li>
-              <li><strong>長音：</strong> ー→削除</li>
-              <li><strong>小文字：</strong> ゃ→や、ゅ→ゆ、ょ→よ、ぁ→あ など</li>
-              <li><strong>カタカナ：</strong>平仮名に直してから清音化</li>
-              <li><strong>NFKC正規化：</strong>半角カタカナ・分解された濁点を統一</li>
-              <li><strong>追加の清音化：</strong>ゔ→う、ゕ→か、ゖ→け</li>
-              <li><strong>表にない文字：</strong>英数字・漢字・記号を除き、除いた文字を画面に表示</li>
+              <li><strong data-i18n="rules.dakuten">濁点：</strong>が→か、ざ→さ、だ→た、ば→は</li>
+              <li><strong data-i18n="rules.handakuten">半濁点：</strong>ぱ→は、ぴ→ひ、ぷ→ふ、ぺ→へ、ぽ→ほ</li>
+              <li><strong data-i18n="rules.sokuon">促音：</strong>っ→つ</li>
+              <li><strong data-i18n="rules.chouon">長音：</strong><span data-i18n="rules.chouonValue">ー→削除</span></li>
+              <li><strong data-i18n="rules.small">小文字：</strong>ゃ→や、ゅ→ゆ、ょ→よ、ぁ→あ<span
+                data-i18n="rules.etc"> など</span></li>
+              <li><strong data-i18n="rules.katakana">カタカナ：</strong><span
+                data-i18n="rules.katakanaValue">平仮名に直してから清音化</span></li>
+              <li><strong data-i18n="rules.nfkc">NFKC正規化：</strong><span
+                data-i18n="rules.nfkcValue">半角カタカナ・分解された濁点を統一</span></li>
+              <li><strong data-i18n="rules.extraSeion">追加の清音化：</strong>ゔ→う、ゕ→か、ゖ→け</li>
+              <li><strong data-i18n="rules.notInTable">表にない文字：</strong><span
+                data-i18n="rules.notInTableValue">英数字・漢字・記号を除き、除いた文字を画面に表示</span></li>
             </ul>
           </div>
         </section>
 
         <section class="help-section">
-          <h3>📊 変換表の見方</h3>
-          <p>テーブルは以下のように読みます。</p>
+          <h3 data-i18n="help.readHeading">📊 変換表の見方</h3>
+          <p data-i18n="help.readIntro">テーブルは以下のように読みます。</p>
           <ul>
-            <li><strong>縦軸（右端）</strong>：偏（木、火、土、金、水、人、身）</li>
-            <li><strong>横軸（上部）</strong>：旁（紫、黒、白、赤、黄、青、色）</li>
-            <li><strong>交点</strong>：該当するひらがな</li>
+            <li><strong data-i18n="help.readRowLabel">縦軸（右端）</strong><span
+              data-i18n="help.readRowValue">：偏（木、火、土、金、水、人、身）</span></li>
+            <li><strong data-i18n="help.readColLabel">横軸（上部）</strong><span
+              data-i18n="help.readColValue">：旁（紫、黒、白、赤、黄、青、色）</span></li>
+            <li><strong data-i18n="help.readCrossLabel">交点</strong><span
+              data-i18n="help.readCrossValue">：該当するひらがな</span></li>
           </ul>
           <div class="example-box">
-            <strong>例：</strong> 「て」を暗号化する場合<br>
-            → テーブルで「て」を探す<br>
-            → 「身」の行、「白」の列にある<br>
-            → 暗号文は「身白」
+            <strong data-i18n="help.exampleLabel">例：</strong><span
+              data-i18n="help.exampleLine1">「て」を暗号化する場合</span><br>
+            <span data-i18n="help.exampleLine2">→ テーブルで「て」を探す</span><br>
+            <span data-i18n="help.exampleLine3">→ 「身」の行、「白」の列にある</span><br>
+            <span data-i18n="help.exampleLine4">→ 暗号文は「身白」</span>
           </div>
         </section>
 
         <section class="help-section">
-          <h3>💡 機能説明</h3>
+          <h3 data-i18n="help.featuresHeading">💡 機能説明</h3>
           <ul>
-            <li><strong>⚡ リアルタイム変換</strong>：文字を入力すると即座に暗号化結果を表示</li>
-            <li><strong>📋 コピーボタン</strong>：変換結果を瞬時にクリップボードにコピー</li>
-            <li><strong>🌙/☀️ テーマ切り替え</strong>：ダークモード・ライトモードの切り替え</li>
-            <li><strong>📱 レスポンシブ対応</strong>：スマートフォンでも快適に利用可能</li>
+            <li><strong data-i18n="help.featureRealtimeLabel">⚡ リアルタイム変換</strong><span
+              data-i18n="help.featureRealtimeValue">：文字を入力すると即座に暗号化結果を表示</span></li>
+            <li><strong data-i18n="help.featureCopyLabel">📋 コピーボタン</strong><span
+              data-i18n="help.featureCopyValue">：変換結果を瞬時にクリップボードにコピー</span></li>
+            <li><strong data-i18n="help.featureThemeLabel">🌙/☀️ テーマ切り替え</strong><span
+              data-i18n="help.featureThemeValue">：ダークモード・ライトモードの切り替え</span></li>
+            <li><strong data-i18n="help.featureLangLabel">🌐 日英切り替え</strong><span
+              data-i18n="help.featureLangValue">：画面の文言を日本語と英語で切り替え（選択は保存されます）</span></li>
+            <li><strong data-i18n="help.featureResponsiveLabel">📱 レスポンシブ対応</strong><span
+              data-i18n="help.featureResponsiveValue">：スマートフォンでも快適に利用可能</span></li>
           </ul>
         </section>
 
         <section class="help-section">
-          <h3>📖 万川集海について</h3>
-          <p>『万川集海』は1676年（延宝4年）に藤林保武によって編纂された伊賀流忍術の教本です。この書物には忍術の心得、武器、暗号技術など、忍者の知識が体系的にまとめられており、現存する最も重要な忍術書の一つとされています。</p>
+          <h3 data-i18n="help.bansenHeading">📖 万川集海について</h3>
+          <p data-i18n="help.bansenBody">『万川集海』は1676年（延宝4年）に藤林保武によって編纂された伊賀流忍術の教本です。この書物には忍術の心得、武器、暗号技術など、忍者の知識が体系的にまとめられており、現存する最も重要な忍術書の一つとされています。</p>
         </section>
       </div>
     </div>
   </div>
 
+  <script src="i18n.js" defer></script>
   <script src="shinobi-logic.js" defer></script>
   <script src="script.js" defer></script>
 </body>
