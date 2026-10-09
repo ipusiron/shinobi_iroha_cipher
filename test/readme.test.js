@@ -87,3 +87,23 @@ test('README画像5枚の参照先が実在する', () => {
   for (const image of images) assert.ok(fs.existsSync(path.join(root, image)), image);
   for (let i = 2; i <= 5; i++) assert.ok(images.includes('assets/screenshot' + i + '.png'));
 });
+
+test('ユースケースの「このツールならではの使い方」の例は暗号化・復号と一致（日英）', () => {
+  const { decrypt } = require('../shinobi-logic.js');
+  const en = fs.readFileSync(path.join(root, 'README.en.md'), 'utf8');
+  const iroha = 'いろはにほへと ちりぬるを わかよたれそ つねならむ うゐのおくやま けふこえて あさきゆめみし ゑひもせす';
+  const tokens = encrypt(iroha).cipher.split(' ');
+  assert.equal(new Set(tokens).size, 47);
+  tokens.forEach((t, i) => assert.equal(t, '木火土金水人身'[i % 7] + '色青黄赤白黒紫'[Math.floor(i / 7)]));
+  const unused = Object.keys(IROHA_TO_PAIR).filter(k => !tokens.includes(IROHA_TO_PAIR[k].hen + IROHA_TO_PAIR[k].tsukuri));
+  assert.deepEqual(unused, ['ん']);
+  assert.ok(readme.includes('「ん」の人紫だけ') && en.includes('人紫 for ん'));
+  const school = encrypt('がっこう').cipher;
+  assert.deepEqual([school, decrypt(school).plain], ['身青 水黄 水白 土赤', 'かつこう']);
+  assert.equal(encrypt('ばか').cipher, encrypt('はか').cipher);
+  assert.equal(encrypt('ばか').cipher, '土色 身青');
+  assert.equal(encrypt('にんじゃ').cipher, '金色 人紫 身黒 木白');
+  for (const text of [readme, en]) {
+    for (const part of ['身青 水黄 水白 土赤', '土色 身青', '金色 人紫 身黒 木白']) assert.ok(text.includes(part), part);
+  }
+});
