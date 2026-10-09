@@ -246,6 +246,12 @@ notice on screen all survive the switch.
 
 ## 🎯 What it is for
 
+### Ways of using this tool in particular
+
+- Reading how the grid was built from the ciphertext (an opening for a class): encrypt the iroha poem and the hen cycle through the seven 木, 火, 土, 金, 水, 人, 身 in order, while the tsukuri move on every seven characters through 色, 青, 黄, 赤, 白, 黒, 紫. The order of the ciphertext shows that the grid is filled in iroha order from the right-hand column. The iroha poem uses each kana once, so all 47 pairs differ, and the only cell left unused is 人紫 for ん
+- Feeling information being lost when dakuten disappear (Japanese and information classes): the tool turns voiced and semi-voiced kana and small kana into their plain forms before substituting. がっこう becomes 身青 水黄 水白 土赤 and decrypts back to かつこう. ばか and はか both become 土色 身青, and only the context tells the reader which one was meant. It is the same way of reading as old kana texts, which often left out dakuten
+- Comparing schemes that write a letter as a row and a column (cryptography classes): Shinobi Iroha writes each kana as a pair of row (hen) and column (tsukuri). にんじゃ becomes 金色 人紫 身黒 木白 (the dakuten and the small ゃ are made plain). Put it next to [Polybius CipherLab](https://ipusiron.github.io/polybius-cipherlab/) (Day067), which turns letters into a pair of row and column numbers on a 5×5 grid, and the difference comes down to naming the rows and columns with numbers or with kanji. Shinobi Iroha is originally written as one glyph combining the hen and the tsukuri, so the ciphertext looks like a single kanji per kana
+
 ### ✅ Good uses
 
 - **Teaching** — a worked example of a classical cipher
