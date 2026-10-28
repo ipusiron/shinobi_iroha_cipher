@@ -28,6 +28,7 @@ GitHub Pages: https://ipusiron.github.io/shinobi_iroha_cipher/
 ### File Structure
 - `index.html` - メインページ（暗号表、ヘルプモーダル含む）
 - `style.css` - CSS変数によるテーマ管理、レスポンシブデザイン
+- `theme-init.js` - 最初の描画の前に保存値からテーマを決め、`<html>`の`data-theme`に入れる（`<head>`で同期読み込み）
 - `script.js` - DOM操作、コピー、テーマ、タブ、モーダル
 - `i18n.js` - 日英の辞書と切り替え（言語の保存もここ）
 - `shinobi-logic.js` - DOM非依存の変換とカーソル位置の計算
@@ -78,7 +79,7 @@ GitHub Pages: https://ipusiron.github.io/shinobi_iroha_cipher/
 
 - 48件の座標・かな・偏旁を変更しない。行は偏、列は旁、身×紫だけ空き
 - 通常スクリプトのままglobalThisとCommonJSで共有し、ES moduleにしない
-- 読み込み順はi18n.js→shinobi-logic.js→script.js、すべてdefer
+- 読み込み順はi18n.js→shinobi-logic.js→script.js、すべてdefer。例外は`<head>`で同期読み込みするtheme-init.jsだけ
 - 入力はtextContentで表示し、HTML挿入・インラインハンドラー・直接のstyle代入を使わない
 - 外部リクエストを追加しない。CSPのself制限とconnect-src none、referrerのno-referrerを保つ
 - 保存はテーマと言語だけ。light・dark以外はlight、ja・en以外は`?lang=`とブラウザーの設定に従う。入力は保存しない

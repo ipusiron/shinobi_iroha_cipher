@@ -65,26 +65,19 @@ function handleModalKeydown(event) {
   }
 }
 
-// テーマ管理
+// テーマ管理。テーマの属性は<html>に付ける
+// 最初のテーマは<head>のtheme-init.jsが描画前に入れている。ここではボタンを同期するだけ
 function initTheme() {
-  let savedTheme = 'light';
-  try {
-    const value = localStorage.getItem('theme');
-    if (value === 'light' || value === 'dark') savedTheme = value;
-  } catch {
-    // 保存領域が使えなくても変換は続ける
-  }
-  document.body.setAttribute('data-theme', savedTheme);
   renderThemeToggle();
   spinThemeIcon();
 }
 
 function toggleTheme() {
-  const body = document.body;
-  const currentTheme = body.getAttribute('data-theme') || 'light';
+  const root = document.documentElement;
+  const currentTheme = root.getAttribute('data-theme') || 'light';
   const newTheme = currentTheme === 'light' ? 'dark' : 'light';
 
-  body.setAttribute('data-theme', newTheme);
+  root.setAttribute('data-theme', newTheme);
   try {
     localStorage.setItem('theme', newTheme);
   } catch {
@@ -96,7 +89,7 @@ function toggleTheme() {
 
 // 読み上げの文言は状態から組み立てる。data-i18n-aria-label だと切り替えで巻き戻る
 function renderThemeToggle() {
-  const theme = document.body.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+  const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
   const toggle = document.getElementById('themeToggle');
   toggle.setAttribute('aria-pressed', String(theme === 'dark'));
   toggle.setAttribute('aria-label', I18n.t(theme === 'dark' ? 'theme.toLight' : 'theme.toDark'));
