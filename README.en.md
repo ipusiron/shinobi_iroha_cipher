@@ -380,6 +380,7 @@ were *not* translated.
 shinobi_iroha_cipher/
 ├── index.html              # the two tabs and the help dialog
 ├── style.css               # palettes, responsive layout, focus styles
+├── theme-init.js           # sets the light or dark theme before the first paint
 ├── script.js               # the DOM, and the cap on input length
 ├── i18n.js                 # the two dictionaries and the switch
 ├── shinobi-logic.js        # clearing, encryption, decryption, cursor position

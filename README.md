@@ -386,6 +386,7 @@ GitHub Actionsがpushとpull_requestのたびに実行します。
 shinobi_iroha_cipher/
 ├── index.html              # 2つのタブとヘルプ
 ├── style.css               # 配色・レスポンシブ・フォーカス表示
+├── theme-init.js           # 最初の描画の前にテーマ（ライト／ダーク）を決める
 ├── script.js               # DOM操作と入力の上限管理
 ├── i18n.js                 # 日英の辞書と切り替え（言語の保存もここ）
 ├── shinobi-logic.js         # 清音化・暗号化・復号・カーソル位置

@@ -22,7 +22,7 @@ test('head・CSP・通信なし・古典スクリプトの順序', () => {
   assert.doesNotMatch(csp, /frame-ancestors|unsafe-inline|unsafe-eval/);
   assert.doesNotMatch(html, /\son\w+\s*=|\sstyle\s*=|<style\b|type="module"/i);
   assert.deepEqual([...html.matchAll(/<script([^>]*)>/g)].map(m => m[1]),
-    [' src="i18n.js" defer', ' src="shinobi-logic.js" defer', ' src="script.js" defer']);
+    [' src="theme-init.js"', ' src="i18n.js" defer', ' src="shinobi-logic.js" defer', ' src="script.js" defer']);
   assert.doesNotMatch(html, /<(?:script|link|img)\b[^>]*(?:src|href)="https?:/i);
   assert.doesNotMatch(css, /@import|http/);
 });
